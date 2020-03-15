@@ -4,7 +4,7 @@ using System.Text;
 
 namespace wdc3.net.File
 {
-    class SectionHeader
+    public class SectionHeader
     {
         public long TactKeyHash { get; set; }
         public int FileOffset { get; set; }
