@@ -167,6 +167,7 @@ typedef struct (Header &header, SectionHeader &section_header) {
 } Section<optimize=false>;
 
 typedef struct (Header &header, SectionHeader section_headers[]) {
+    local int i;
     for(i=0; i < header.section_count; i++)
     {
         Section data_sections(header, section_headers[i]);
@@ -177,8 +178,8 @@ struct {
     Header header;
     SectionHeader sectionHeaders[header.section_count];
     FieldStructure fieldStructure[header.total_field_count];
-    FieldStorageInfos field_infos(header.field_storage_info_size/28);
-    
+    FieldStorageInfos field_infos( header.field_storage_info_size / 24 );
+
     byte pallet_data[header.pallet_data_size];
     
     if(header.common_data_size > 0)
@@ -186,6 +187,5 @@ struct {
         byte common_data[header.common_data_size];
     }
 
-    local int i;
     Sections sections(header, sectionHeaders);
 } db2;
