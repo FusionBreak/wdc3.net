@@ -65,8 +65,8 @@ typedef struct {
 } FieldStructure;
 
 typedef struct {
-    uint field_offset_bits;
-    uint field_size_bits;
+    ushort field_offset_bits;
+    ushort field_size_bits;
     uint additional_data_size;
     FieldCompression storage_type;
 
