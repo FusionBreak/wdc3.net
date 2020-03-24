@@ -112,7 +112,7 @@ typedef struct (Header &header) {
 typedef struct {
     uint id_of_new_row;
     uint id_of_copied_row;
-} CopyTabeEntry<optimize=false>;
+} CopyTableEntry<optimize=false>;
 
 typedef struct {
     uint offset;
@@ -146,7 +146,7 @@ typedef struct (Header &header, SectionHeader &section_header) {
 
     if (section_header.copy_table_count > 0)
     {
-        CopyTabeEntry copy_table[section_header.copy_table_count];
+        CopyTableEntry copy_table[section_header.copy_table_count];
     }
 
     if(section_header.offset_map_id_count > 0)
