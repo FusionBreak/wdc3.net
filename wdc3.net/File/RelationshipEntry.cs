@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace wdc3.net
+namespace wdc3.net.File
 {
     public class RelationshipEntry
     {

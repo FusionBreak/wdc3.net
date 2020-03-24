@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using wdc3.net.File;
 
-namespace wdc3.net
+namespace wdc3.net.File
 {
     public class SectionWithFlag : ISection
     {
