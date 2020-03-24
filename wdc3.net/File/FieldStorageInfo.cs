@@ -4,7 +4,7 @@ using System.Text;
 
 namespace wdc3.net.File
 {
-    class FieldStorageInfo : IFieldStorageInfo
+    public class FieldStorageInfo : IFieldStorageInfo
     {
         public short FieldOffsetBits { get; set; }
         public short FieldSizeBits { get; set; }
