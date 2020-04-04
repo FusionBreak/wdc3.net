@@ -6,9 +6,9 @@ namespace wdc3.net.File
 {
     public interface IFieldStorageInfo
     {
-        public short FieldOffsetBits { get; set; }
-        public short FieldSizeBits { get; set; }
-        public int AdditionalDataSize { get; set; }
-        public FieldCompressions StorageType { get; set; }
+        short FieldOffsetBits { get; set; }
+        short FieldSizeBits { get; set; }
+        int AdditionalDataSize { get; set; }
+        FieldCompressions StorageType { get; set; }
     }
 }

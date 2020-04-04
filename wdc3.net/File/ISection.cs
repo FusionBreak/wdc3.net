@@ -6,10 +6,10 @@ namespace wdc3.net.File
 {
     public interface ISection
     {
-        public IEnumerable<int> IdList { get; set; }
-        public CopyTableEntry CopyTable { get; set; }
-        public OffsetMapEntry OffsetMap { get; set; }
-        public RelationshipMapping RelationshipMap { get; set; }
-        public IEnumerable<int> OffsetMapIdList { get; set; }
+        IEnumerable<int> IdList { get; set; }
+        CopyTableEntry CopyTable { get; set; }
+        OffsetMapEntry OffsetMap { get; set; }
+        RelationshipMapping RelationshipMap { get; set; }
+        IEnumerable<int> OffsetMapIdList { get; set; }
     }
 }
