@@ -18,7 +18,7 @@ namespace wdc3.net.Reader
 
             db.Header = headerReader.Read();
 
-            return null;
+            return db;
         }
     }
 }
