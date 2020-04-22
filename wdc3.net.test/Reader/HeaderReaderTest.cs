@@ -29,6 +29,7 @@ namespace wdc3.net.test.Reader
             Assert.Equal(0, header.IdIndex);
             Assert.Equal(23, header.TotalFieldCount);
             Assert.Equal(32, header.BitpackedDataOffset);
+            Assert.Equal(0, header.LookUpColumnCount);
             Assert.Equal(552, header.FieldStorageInfoSize);
             Assert.Equal(0, header.CommonDataSize);
             Assert.Equal(2376, header.PalletDataSize);
