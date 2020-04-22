@@ -11,8 +11,8 @@ namespace wdc3.net.File
         public int FieldCount { get; set; }
         public int RecordSize { get; set; }
         public int StringTableSize { get; set; }
-        public int TabeHash { get; set; }
-        public int LayoutHash { get; set; }
+        public uint TableHash { get; set; }
+        public uint LayoutHash { get; set; }
         public int MinId { get; set; }
         public int MaxId { get; set; }
         public int Locale { get; set; }
