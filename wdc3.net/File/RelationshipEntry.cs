@@ -6,7 +6,7 @@ namespace wdc3.net.File
 {
     public class RelationshipEntry
     {
-        public int ForeignId { get; set; }
-        public int RecordIndex { get; set; }
+        public uint ForeignId { get; set; }
+        public uint RecordIndex { get; set; }
     }
 }

@@ -16,24 +16,24 @@ namespace wdc3.net.test.Reader
             HeaderReader headerReader = new HeaderReader(reader);
             var header = headerReader.Read();
             Assert.Equal(860046423, header.Magic);
-            Assert.Equal(1025, header.RecordCount);
-            Assert.Equal(23, header.FieldCount);
-            Assert.Equal(48, header.RecordSize);
-            Assert.Equal(55876, header.StringTableSize);
-            Assert.Equal(3179597154, header.TableHash);
-            Assert.Equal(3667170223, header.LayoutHash);
-            Assert.Equal(0, header.MinId);
-            Assert.Equal(2297, header.MaxId);
-            Assert.Equal(1, header.Locale);
-            Assert.Equal(4, header.Flags);
-            Assert.Equal(0, header.IdIndex);
-            Assert.Equal(23, header.TotalFieldCount);
-            Assert.Equal(32, header.BitpackedDataOffset);
-            Assert.Equal(0, header.LookUpColumnCount);
-            Assert.Equal(552, header.FieldStorageInfoSize);
-            Assert.Equal(0, header.CommonDataSize);
-            Assert.Equal(2376, header.PalletDataSize);
-            Assert.Equal(4, header.SectionCount);
+            Assert.Equal((uint)1025, header.RecordCount);
+            Assert.Equal((uint)23, header.FieldCount);
+            Assert.Equal((uint)48, header.RecordSize);
+            Assert.Equal((uint)55876, header.StringTableSize);
+            Assert.Equal((uint)3179597154, header.TableHash);
+            Assert.Equal((uint)3667170223, header.LayoutHash);
+            Assert.Equal((uint)0, header.MinId);
+            Assert.Equal((uint)2297, header.MaxId);
+            Assert.Equal((uint)1, header.Locale);
+            Assert.Equal((uint)4, header.Flags);
+            Assert.Equal((uint)0, header.IdIndex);
+            Assert.Equal((uint)23, header.TotalFieldCount);
+            Assert.Equal((uint)32, header.BitpackedDataOffset);
+            Assert.Equal((uint)0, header.LookUpColumnCount);
+            Assert.Equal((uint)552, header.FieldStorageInfoSize);
+            Assert.Equal((uint)0, header.CommonDataSize);
+            Assert.Equal((uint)2376, header.PalletDataSize);
+            Assert.Equal((uint)4, header.SectionCount);
         }
     }
 }

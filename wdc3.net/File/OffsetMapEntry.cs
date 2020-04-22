@@ -6,7 +6,7 @@ namespace wdc3.net.File
 {
     public class OffsetMapEntry
     {
-        public int Offset { get; set; }
-        public byte Size { get; set; }
+        public uint Offset { get; set; }
+        public ushort Size { get; set; }
     }
 }

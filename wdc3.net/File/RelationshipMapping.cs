@@ -6,8 +6,8 @@ namespace wdc3.net.File
 {
     public class RelationshipMapping
     {
-        public int NumEntries { get; set; }
-        public int MinId { get; set; }
-        public int MaxId { get; set; }
+        public uint NumEntries { get; set; }
+        public uint MinId { get; set; }
+        public uint MaxId { get; set; }
     }
 }
