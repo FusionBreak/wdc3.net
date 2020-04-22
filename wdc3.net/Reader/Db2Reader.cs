@@ -12,11 +12,13 @@ namespace wdc3.net.Reader
         {
             var fileBuffer = System.IO.File.ReadAllBytes(path);
             Db2 db = new Db2();
-            
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
-            HeaderReader headerReader = new HeaderReader(reader);
 
+            HeaderReader headerReader = new HeaderReader(reader);
             db.Header = headerReader.Read();
+
+            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, (int)db.Header.SectionCount); 
+            db.SectionHeaders = sectionHeaderReader.Read();
 
             return db;
         }
