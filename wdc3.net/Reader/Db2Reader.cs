@@ -23,6 +23,9 @@ namespace wdc3.net.Reader
             FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, (int)db.Header.TotalFieldCount);
             db.FieldStructures = fieldStructureReader.Read();
 
+            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, (int)db.Header.FieldStorageInfoSize);
+            db.FieldStorageInfos = fieldStorageInfoReader.Read();
+
             return db;
         }
     }
