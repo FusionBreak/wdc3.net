@@ -12,5 +12,6 @@ namespace wdc3.net.File
         public FieldCompressions StorageType { get; set; }
         public uint BitpackingSizeBits { get; set; }
         public uint BitpackingOffsetBits { get; set; }
+        public uint Flags { get; set; }
     }
 }
