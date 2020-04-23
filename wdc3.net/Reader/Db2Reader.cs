@@ -20,6 +20,9 @@ namespace wdc3.net.Reader
             SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, (int)db.Header.SectionCount); 
             db.SectionHeaders = sectionHeaderReader.Read();
 
+            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, (int)db.Header.TotalFieldCount);
+            db.FieldStructures = fieldStructureReader.Read();
+
             return db;
         }
     }

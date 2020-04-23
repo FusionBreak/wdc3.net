@@ -1,0 +1,45 @@
+using System.Linq;
+using System;
+using System.IO;
+using wdc3.net.Reader;
+using Xunit;
+using System.Collections.Generic;
+using System.Collections;
+using wdc3.net.File;
+
+namespace wdc3.net.test.Reader
+{
+    public class FieldStructureReaderTest
+    {
+        [Fact]
+        public void ReadCorrectNumberOfFieldStructures()
+        {
+            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            reader.BaseStream.Position = 232;
+            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);
+            var fieldStructures = fieldStructureReader.Read();
+
+            Assert.Equal(23, fieldStructures.Count());
+        }
+
+        [Fact]
+        public void ReadFieldStructuresCorrectly()
+        {
+            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            reader.BaseStream.Position = 232;
+            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);
+            var fieldStructures = fieldStructureReader.Read().ToList();
+            
+            Assert.Equal(0, fieldStructures[0].Size);
+            Assert.Equal(0, fieldStructures[0].Position);
+
+            Assert.Equal(0, fieldStructures[6].Size);
+            Assert.Equal(24, fieldStructures[6].Position);
+
+            Assert.Equal(32, fieldStructures[22].Size);
+            Assert.Equal(32, fieldStructures[22].Position);
+        }
+    }
+}
