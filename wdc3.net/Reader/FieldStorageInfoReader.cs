@@ -99,7 +99,9 @@ namespace wdc3.net.Reader
 
                 output.Add(fieldStorageInfo);
             }
-            
+
+            Position = _reader.BaseStream.Position;
+
             return output;
         }
     }
