@@ -26,7 +26,30 @@ namespace wdc3.net.Reader
             FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, (int)db.Header.FieldStorageInfoSize);
             db.FieldStorageInfos = fieldStorageInfoReader.Read();
 
+            db.PalletData = ReadPalletData(reader, (int)db.Header.PalletDataSize);
+            db.CommonData = ReadCommonData(reader, (int)db.Header.CommonDataSize);
+
             return db;
+        }
+
+        public IEnumerable<byte> ReadPalletData(BinaryReader reader, int palletDataSize)
+        {
+            List<byte> output = new List<byte>();
+
+            for(int currentPalletData = 0; currentPalletData < palletDataSize; currentPalletData++)
+                output.Add(reader.ReadByte());
+            
+            return output;
+        }
+
+        public IEnumerable<byte> ReadCommonData(BinaryReader reader, int commonDataSize)
+        {
+            List<byte> output = new List<byte>();
+
+            for(int currentCommonData = 0; currentCommonData < commonDataSize; currentCommonData++)
+                output.Add(reader.ReadByte());
+
+            return output;
         }
     }
 }
