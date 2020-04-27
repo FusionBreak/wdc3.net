@@ -8,10 +8,12 @@ namespace wdc3.net.test.Reader
     public class Db2ReaderTest
     {
         [Fact]
-        public void XXX()
+        public void ReadsTheWholeFile()
         {
+            FileInfo mapDb2 = new FileInfo(@"..\..\..\TestFiles\map.db2");
             Db2Reader reader = new Db2Reader();
-            reader.ReadFile(@"..\..\..\TestFiles\map.db2");
+            reader.ReadFile(mapDb2.FullName);
+            Assert.Equal(mapDb2.Length, reader.BytesReaded);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace wdc3.net.Reader
 {
     public class Db2Reader
     {
+        public long BytesReaded { get; private set; }
         public Db2 ReadFile(string path)
         {
             var fileBuffer = System.IO.File.ReadAllBytes(path);
@@ -31,6 +32,8 @@ namespace wdc3.net.Reader
 
             SectionReader sectionReader = new SectionReader(reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
             db.Sections = sectionReader.Read();
+
+            BytesReaded = reader.BaseStream.Position;
 
             return db;
         }
