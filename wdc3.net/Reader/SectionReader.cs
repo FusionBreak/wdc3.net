@@ -29,10 +29,18 @@ namespace wdc3.net.Reader
 
             foreach(var sectionHeader in _sectionHeaders)
             {
+                ISection section;
                 if((_headerFlag & 1) == 0)
-                    output.Add(ReadSection(sectionHeader.RecordCount, sectionHeader.StringTableSize));
+                    section = ReadSection(sectionHeader.RecordCount, sectionHeader.StringTableSize);
                 else
-                    output.Add(ReadSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset));
+                    section = ReadSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset);
+
+                var idList = new List<uint>();
+                for(int i = 0; i < sectionHeader.IdListSize / 4; i++)
+                    idList.Add(_reader.ReadUInt32());
+                section.IdList = idList;
+
+
             }
 
             Position = _reader.BaseStream.Position;
