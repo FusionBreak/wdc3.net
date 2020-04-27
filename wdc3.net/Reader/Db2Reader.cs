@@ -8,32 +8,35 @@ namespace wdc3.net.Reader
 {
     public class Db2Reader
     {
-        public long BytesReaded { get; private set; }
+        public long BytesReaded => _reader != null ? _reader.BaseStream.Position : 0;
+
+        private byte[]? _fileBuffer;
+        private BinaryReader? _reader;
+
         public Db2 ReadFile(string path)
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(path);
-            Db2 db = new Db2();
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            _fileBuffer = System.IO.File.ReadAllBytes(path);
+            _reader = new BinaryReader(new MemoryStream(_fileBuffer));
 
-            HeaderReader headerReader = new HeaderReader(reader);
+            Db2 db = new Db2();
+
+            HeaderReader headerReader = new HeaderReader(_reader);
             db.Header = headerReader.Read();
 
-            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, (int)db.Header.SectionCount); 
+            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(_reader, (int)db.Header.SectionCount); 
             db.SectionHeaders = sectionHeaderReader.Read();
 
-            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, (int)db.Header.TotalFieldCount);
+            FieldStructureReader fieldStructureReader = new FieldStructureReader(_reader, (int)db.Header.TotalFieldCount);
             db.FieldStructures = fieldStructureReader.Read();
 
-            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, (int)db.Header.FieldStorageInfoSize);
+            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(_reader, (int)db.Header.FieldStorageInfoSize);
             db.FieldStorageInfos = fieldStorageInfoReader.Read();
 
-            db.PalletData = ReadPalletData(reader, (int)db.Header.PalletDataSize);
-            db.CommonData = ReadCommonData(reader, (int)db.Header.CommonDataSize);
+            db.PalletData = ReadPalletData(_reader, (int)db.Header.PalletDataSize);
+            db.CommonData = ReadCommonData(_reader, (int)db.Header.CommonDataSize);
 
-            SectionReader sectionReader = new SectionReader(reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
+            SectionReader sectionReader = new SectionReader(_reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
             db.Sections = sectionReader.Read();
-
-            BytesReaded = reader.BaseStream.Position;
 
             return db;
         }
