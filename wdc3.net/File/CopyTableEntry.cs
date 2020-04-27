@@ -6,7 +6,7 @@ namespace wdc3.net.File
 {
     public class CopyTableEntry
     {
-        public int IdOfNewRow { get; set; }
-        public int IdOfCopiedRow { get; set; }
+        public uint IdOfNewRow { get; set; }
+        public uint IdOfCopiedRow { get; set; }
     }
 }

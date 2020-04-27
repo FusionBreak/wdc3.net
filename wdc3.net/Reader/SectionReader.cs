@@ -31,23 +31,56 @@ namespace wdc3.net.Reader
             {
                 ISection section;
                 if((_headerFlag & 1) == 0)
-                    section = ReadSection(sectionHeader.RecordCount, sectionHeader.StringTableSize);
+                    section = readSection(sectionHeader.RecordCount, sectionHeader.StringTableSize);
                 else
-                    section = ReadSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset);
+                    section = readSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset);
 
                 var idList = new List<uint>();
                 for(int i = 0; i < sectionHeader.IdListSize / 4; i++)
                     idList.Add(_reader.ReadUInt32());
                 section.IdList = idList;
 
+                if(sectionHeader.CopyTableCount > 0)
+                {
+                    var copyTable = new CopyTableEntry();
+                    copyTable.IdOfNewRow = _reader.ReadUInt32();
+                    copyTable.IdOfCopiedRow = _reader.ReadUInt32();
+                    section.CopyTable = copyTable;
+                }
+                
+                if(sectionHeader.OffsetMapIdCount > 0)
+                {
+                    var offsetMap = new OffsetMapEntry();
+                    offsetMap.Offset = _reader.ReadUInt32();
+                    offsetMap.Size = _reader.ReadUInt16();
+                    section.OffsetMap = offsetMap;
+                }
 
+                if(sectionHeader.RelationsshipDataSize > 0)
+                {
+                    var relationshipMap = new RelationshipMapping();
+                    relationshipMap.NumEntries = _reader.ReadUInt32();
+                    relationshipMap.MinId = _reader.ReadUInt32();
+                    relationshipMap.MaxId = _reader.ReadUInt32();
+                    section.RelationshipMap = relationshipMap;
+                }
+
+                if(sectionHeader.OffsetMapIdCount > 0)
+                {
+                    var offsetMapIdList = new List<uint>();
+                    for(int i = 0; i < sectionHeader.OffsetMapIdCount; i++)
+                        offsetMapIdList.Add(_reader.ReadUInt32());
+                    section.OffsetMapIdList = offsetMapIdList;
+                }
+
+                output.Add(section);
             }
 
             Position = _reader.BaseStream.Position;
             return output;
         }
 
-        public SectionWithFlag ReadSectionWithFlag(uint variableRecordDataLength)
+        private SectionWithFlag readSectionWithFlag(uint variableRecordDataLength)
         {
             var output = new SectionWithFlag();
 
@@ -60,7 +93,7 @@ namespace wdc3.net.Reader
             return output;
         }
 
-        public Section ReadSection(uint recordCount, uint stringTableSize)
+        private Section readSection(uint recordCount, uint stringTableSize)
         {
             var output = new Section();
 

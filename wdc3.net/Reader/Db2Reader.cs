@@ -29,6 +29,9 @@ namespace wdc3.net.Reader
             db.PalletData = ReadPalletData(reader, (int)db.Header.PalletDataSize);
             db.CommonData = ReadCommonData(reader, (int)db.Header.CommonDataSize);
 
+            SectionReader sectionReader = new SectionReader(reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
+            db.Sections = sectionReader.Read();
+
             return db;
         }
 
