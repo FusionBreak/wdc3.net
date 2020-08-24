@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using wdc3.net.File;
@@ -20,11 +19,11 @@ namespace wdc3.net.Reader
         public IEnumerable<SectionHeader> Read()
         {
             var output = new List<SectionHeader>();
-            
-            for (int currentCount = 0; currentCount < _sectionCount; currentCount++)
+
+            for(int currentCount = 0; currentCount < _sectionCount; currentCount++)
             {
                 var sectionHeader = new SectionHeader();
-                
+
                 sectionHeader.TactKeyHash = _reader.ReadUInt64();
                 sectionHeader.FileOffset = _reader.ReadUInt32();
                 sectionHeader.RecordCount = _reader.ReadUInt32();
@@ -37,9 +36,9 @@ namespace wdc3.net.Reader
 
                 output.Add(sectionHeader);
             }
-            
+
             Position = _reader.BaseStream.Position;
-            
+
             return output;
         }
     }

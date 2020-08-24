@@ -7,10 +7,7 @@ namespace wdc3.net.Reader
     {
         BinaryReader _reader;
         public long Position { get; private set; }
-        public HeaderReader(BinaryReader reader)
-        {
-            _reader = reader;
-        }
+        public HeaderReader(BinaryReader reader) => _reader = reader;
 
         public Header Read()
         {

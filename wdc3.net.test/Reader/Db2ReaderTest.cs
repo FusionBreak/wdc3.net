@@ -12,7 +12,7 @@ namespace wdc3.net.test.Reader
         {
             FileInfo mapDb2 = new FileInfo(@"..\..\..\TestFiles\map.db2");
             Db2Reader reader = new Db2Reader();
-            reader.ReadFile(mapDb2.FullName);
+            var db2 = reader.ReadFile(mapDb2.FullName);
             Assert.Equal(mapDb2.Length, reader.BytesReaded);
         }
     }

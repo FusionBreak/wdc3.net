@@ -21,14 +21,14 @@ namespace wdc3.net.Reader
 
         public IEnumerable<IFieldStorageInfo> Read()
         {
-            List<IFieldStorageInfo> output = new List<IFieldStorageInfo>();
-            
-            for (int currentFieldStorageCount = 0; currentFieldStorageCount < fieldStorageInfoCount; currentFieldStorageCount++)
+            var output = new List<IFieldStorageInfo>();
+
+            for(int currentFieldStorageCount = 0; currentFieldStorageCount < fieldStorageInfoCount; currentFieldStorageCount++)
             {
                 ushort fieldOffsetBits = _reader.ReadUInt16();
                 ushort fieldSizeBits = _reader.ReadUInt16();
                 uint additionalDataSize = _reader.ReadUInt32();
-                FieldCompressions storageType = (FieldCompressions)_reader.ReadInt32();
+                var storageType = (FieldCompressions)_reader.ReadInt32();
                 uint value1 = _reader.ReadUInt32();
                 uint value2 = _reader.ReadUInt32();
                 uint value3 = _reader.ReadUInt32();
@@ -36,7 +36,7 @@ namespace wdc3.net.Reader
                 IFieldStorageInfo fieldStorageInfo = storageType switch
                 {
                     FieldCompressions.Bitpacked => new FieldStorageInfoBitPacked()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,
@@ -46,7 +46,7 @@ namespace wdc3.net.Reader
                         Flags = value3
                     },
                     FieldCompressions.BitpackedSigned => new FieldStorageInfoBitPacked()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,
@@ -56,7 +56,7 @@ namespace wdc3.net.Reader
                         Flags = value3
                     },
                     FieldCompressions.CommonData => new FieldStorageInfoCommonData()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,
@@ -66,7 +66,7 @@ namespace wdc3.net.Reader
                         UnkOrUnused3 = value3
                     },
                     FieldCompressions.BitpackedIndexed => new FieldStorageInfoBitPackedIndexed()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,
@@ -76,7 +76,7 @@ namespace wdc3.net.Reader
                         UnkOrUnused3 = value3
                     },
                     FieldCompressions.BitpackedIndexedArray => new FieldStorageInfoBitPackedIndexedArray()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,
@@ -86,7 +86,7 @@ namespace wdc3.net.Reader
                         ArrayCount = value3
                     },
                     _ => new FieldStorageInfo()
-                    { 
+                    {
                         FieldOffsetBits = fieldOffsetBits,
                         FieldSizeBits = fieldSizeBits,
                         AdditionalDataSize = additionalDataSize,

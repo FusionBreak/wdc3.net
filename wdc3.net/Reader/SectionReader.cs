@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using wdc3.net.File;
 
 namespace wdc3.net.Reader
@@ -25,7 +22,7 @@ namespace wdc3.net.Reader
 
         public IEnumerable<ISection> Read()
         {
-            List<ISection> output = new List<ISection>();
+            var output = new List<ISection>();
 
             foreach(var sectionHeader in _sectionHeaders)
             {
@@ -47,7 +44,7 @@ namespace wdc3.net.Reader
                     copyTable.IdOfCopiedRow = _reader.ReadUInt32();
                     section.CopyTable = copyTable;
                 }
-                
+
                 if(sectionHeader.OffsetMapIdCount > 0)
                 {
                     var offsetMap = new OffsetMapEntry();

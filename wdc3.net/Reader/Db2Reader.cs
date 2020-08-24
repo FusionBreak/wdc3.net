@@ -1,7 +1,5 @@
-﻿using System.IO;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.IO;
 using wdc3.net.File;
 
 namespace wdc3.net.Reader
@@ -18,24 +16,24 @@ namespace wdc3.net.Reader
             _fileBuffer = System.IO.File.ReadAllBytes(path);
             _reader = new BinaryReader(new MemoryStream(_fileBuffer));
 
-            Db2 db = new Db2();
+            var db = new Db2();
 
-            HeaderReader headerReader = new HeaderReader(_reader);
+            var headerReader = new HeaderReader(_reader);
             db.Header = headerReader.Read();
 
-            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(_reader, (int)db.Header.SectionCount); 
+            var sectionHeaderReader = new SectionHeaderReader(_reader, (int)db.Header.SectionCount);
             db.SectionHeaders = sectionHeaderReader.Read();
 
-            FieldStructureReader fieldStructureReader = new FieldStructureReader(_reader, (int)db.Header.TotalFieldCount);
+            var fieldStructureReader = new FieldStructureReader(_reader, (int)db.Header.TotalFieldCount);
             db.FieldStructures = fieldStructureReader.Read();
 
-            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(_reader, (int)db.Header.FieldStorageInfoSize);
+            var fieldStorageInfoReader = new FieldStorageInfoReader(_reader, (int)db.Header.FieldStorageInfoSize);
             db.FieldStorageInfos = fieldStorageInfoReader.Read();
 
             db.PalletData = ReadPalletData(_reader, (int)db.Header.PalletDataSize);
             db.CommonData = ReadCommonData(_reader, (int)db.Header.CommonDataSize);
 
-            SectionReader sectionReader = new SectionReader(_reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
+            var sectionReader = new SectionReader(_reader, db.SectionHeaders, db.Header.Flags, db.Header.RecordSize);
             db.Sections = sectionReader.Read();
 
             return db;
@@ -43,17 +41,17 @@ namespace wdc3.net.Reader
 
         public IEnumerable<byte> ReadPalletData(BinaryReader reader, int palletDataSize)
         {
-            List<byte> output = new List<byte>();
+            var output = new List<byte>();
 
             for(int currentPalletData = 0; currentPalletData < palletDataSize; currentPalletData++)
                 output.Add(reader.ReadByte());
-            
+
             return output;
         }
 
         public IEnumerable<byte> ReadCommonData(BinaryReader reader, int commonDataSize)
         {
-            List<byte> output = new List<byte>();
+            var output = new List<byte>();
 
             for(int currentCommonData = 0; currentCommonData < commonDataSize; currentCommonData++)
                 output.Add(reader.ReadByte());

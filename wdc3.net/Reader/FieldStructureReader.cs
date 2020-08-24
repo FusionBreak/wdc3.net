@@ -20,7 +20,7 @@ namespace wdc3.net.Reader
         {
             var output = new List<FieldStructure>();
 
-            for (int currentStructureCount = 0; currentStructureCount < _totalFieldCount; currentStructureCount++)
+            for(int currentStructureCount = 0; currentStructureCount < _totalFieldCount; currentStructureCount++)
             {
                 var structure = new FieldStructure();
 
