@@ -8,6 +8,6 @@ namespace wdc3.net.dbd.File
     {
         public IEnumerable<ColumnDefinition>? ColumnDefinitions { get; set; }
         public IEnumerable<VersionDefinition>? VersionDefinitions { get; set; }
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
     }
 }
