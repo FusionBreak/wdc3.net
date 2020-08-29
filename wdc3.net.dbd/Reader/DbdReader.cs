@@ -28,11 +28,31 @@ namespace wdc3.net.dbd.Reader
 
         public Db2Definition ReadFile(string path)
         {
+            var output = new Db2Definition();
             _allLines = System.IO.File.ReadAllLines(path);
 
             if(CurrentLine == null)
                 throw new Exception("Empty line.");
 
+            _chunks = readAllLinesToChunks().ToList();
+
+            foreach(var chunk in _chunks)
+            {
+                switch(chunk.Name)
+                {
+                    case DataChunkNames.COLUMNS:
+                        output.ColumnDefinitions = new ColumnDefinitionParser().Parse(chunk).ToList();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+            return output;
+        }
+
+        private IEnumerable<DataChunk> readAllLinesToChunks()
+        {
             while(!AllLinesReaded)
             {
                 if(CurrentLineStartsWithDataChunk)
@@ -44,19 +64,14 @@ namespace wdc3.net.dbd.Reader
                         Parameters = header.Parameters,
                         Content = readChunkContent().ToList()
                     };
-                    _chunks.Add(chunk);
+                    yield return chunk;
                 }
                 else
                 {
                     _currentLineNumber++;
                 }
             }
-            
-            
-            return null;
         }
-
-
 
         private (string? Name, IEnumerable<string>? Parameters) readChunkHeader()
         {

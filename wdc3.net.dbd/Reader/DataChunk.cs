@@ -12,6 +12,6 @@ namespace wdc3.net.dbd.Reader
         public IEnumerable<string>? Parameters { get; set; }
         public bool HasParameters => Parameters.Any();
         public IEnumerable<string>? Content { get; set; }
-        public bool HasContent => Content.Any();
+        public bool HasContent => Content != null && Content.Any();
     }
 }
