@@ -4,7 +4,7 @@ using wdc3.net.File;
 
 namespace wdc3.net.Reader
 {
-    internal class SectionReader : IFileReader<IEnumerable<ISection>>
+    public class SectionReader : IFileReader<IEnumerable<ISection>>
     {
         public long Position { get; private set; }
         BinaryReader _reader;

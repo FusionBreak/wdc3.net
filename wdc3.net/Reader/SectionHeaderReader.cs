@@ -4,7 +4,7 @@ using wdc3.net.File;
 
 namespace wdc3.net.Reader
 {
-    internal class SectionHeaderReader : IFileReader<IEnumerable<SectionHeader>>
+    public class SectionHeaderReader : IFileReader<IEnumerable<SectionHeader>>
     {
         BinaryReader _reader;
         int _sectionCount;

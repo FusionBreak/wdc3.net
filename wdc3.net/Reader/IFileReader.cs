@@ -1,6 +1,6 @@
 namespace wdc3.net.Reader
 {
-    internal interface IFileReader<T>
+    public interface IFileReader<T>
     {
         long Position { get; }
 

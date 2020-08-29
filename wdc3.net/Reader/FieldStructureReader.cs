@@ -4,7 +4,7 @@ using wdc3.net.File;
 
 namespace wdc3.net.Reader
 {
-    internal class FieldStructureReader : IFileReader<IEnumerable<FieldStructure>>
+    public class FieldStructureReader : IFileReader<IEnumerable<FieldStructure>>
     {
         BinaryReader _reader;
         int _totalFieldCount;

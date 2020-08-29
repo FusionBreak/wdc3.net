@@ -3,7 +3,7 @@ using wdc3.net.File;
 
 namespace wdc3.net.Reader
 {
-    internal class HeaderReader : IFileReader<Header>
+    public class HeaderReader : IFileReader<Header>
     {
         BinaryReader _reader;
         public long Position { get; private set; }
