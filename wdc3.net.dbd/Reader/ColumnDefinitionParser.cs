@@ -6,7 +6,7 @@ using wdc3.net.dbd.File;
 
 namespace wdc3.net.dbd.Reader
 {
-    class ColumnDefinitionParser
+    internal class ColumnDefinitionParser
     {
         public IEnumerable<ColumnDefinition> Parse(DataChunk chunk)
         {

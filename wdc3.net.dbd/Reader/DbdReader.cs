@@ -29,6 +29,7 @@ namespace wdc3.net.dbd.Reader
         public Db2Definition ReadFile(string path)
         {
             var output = new Db2Definition();
+            var versions = new List<VersionDefinition>();
             _allLines = System.IO.File.ReadAllLines(path);
 
             if(CurrentLine == null)
@@ -43,10 +44,21 @@ namespace wdc3.net.dbd.Reader
                     case DataChunkNames.COLUMNS:
                         output.ColumnDefinitions = new ColumnDefinitionParser().Parse(chunk).ToList();
                         break;
+                    case DataChunkNames.LAYOUT:
+                        versions.Add(new VersionDefinitionParser().ParseLayout(chunk));
+                        break;
+                    case DataChunkNames.BUILD:
+                        versions.Add(new VersionDefinitionParser().ParseBuild(chunk));
+                        break;
+                    case DataChunkNames.COMMENT:
+                        output.Comment = chunk.Parameters.First();
+                        break;
                     default:
                         break;
                 }
             }
+
+            output.VersionDefinitions = versions;
             
             return output;
         }
