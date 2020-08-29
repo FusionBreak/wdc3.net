@@ -4,7 +4,7 @@ using wdc3.net.File;
 
 namespace wdc3.net.Reader
 {
-    public class FieldStorageInfoReader : IFileReader<IEnumerable<IFieldStorageInfo>>
+    internal class FieldStorageInfoReader : IFileReader<IEnumerable<IFieldStorageInfo>>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles")]
         const int SIZE_OF_FIELD_STORAGE_INFO = 24;
