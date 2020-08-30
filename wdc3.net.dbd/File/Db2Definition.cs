@@ -14,7 +14,12 @@ namespace wdc3.net.dbd.File
 
         public VersionDefinition GetVersionDefinition(string buildString)
             => VersionDefinitions
-                .Where(version => version.Builds.Contains(new BuildInfoFactory().CreateFromBuildString(buildString)))
+                .Where(version => version.Builds != null && version.Builds.Contains(new BuildInfoFactory().CreateFromBuildString(buildString)))
+                .First();
+
+        public VersionDefinition GetVersionDefinition(uint hexLayoutHash)
+            => VersionDefinitions
+                .Where(version => version.LayoutHashes != null && version.LayoutHashes.Contains(hexLayoutHash.ToString("X4")))
                 .First();
     }
 }
