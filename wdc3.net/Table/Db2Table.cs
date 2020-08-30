@@ -8,7 +8,6 @@ namespace wdc3.net.Table
     public class Db2Table
     {
         public string? Name { get; set; }
-        public string? Build { get; set; }
         public string? Locale { get; set; }
 
         public void AddColumn(string name, Type type) => _columns.Add(name, type);

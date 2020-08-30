@@ -14,7 +14,6 @@ namespace wdc3.net.test.Table
             var table = new Db2Table();
             table.Name = "Testtable";
             table.Locale = "xx-XX";
-            table.Build = "1.1.1.1111";
 
             table.AddColumn("First", typeof(string));
             table.AddColumn("Second", typeof(int));
