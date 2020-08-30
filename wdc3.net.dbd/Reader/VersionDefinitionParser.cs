@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using wdc3.net.dbd.Enums;
+using wdc3.net.dbd.Factorys;
 using wdc3.net.dbd.File;
 
 namespace wdc3.net.dbd.Reader
@@ -80,10 +81,11 @@ namespace wdc3.net.dbd.Reader
         private IEnumerable<BuildInfo> parseBuilds(string row)
         {
             var versionStrings = row.Split(' ')[1..].Select(a => a.Replace(",", ""));
+            var buildfac = new BuildInfoFactory();
 
             foreach(var versionString in versionStrings)
             {
-                yield return parseBuildInfo(versionString);
+                yield return buildfac.CreateFromBuildString(versionString);
             }
         }
 
@@ -91,23 +93,11 @@ namespace wdc3.net.dbd.Reader
         private BuildRange parseBuildRange(string row)
         {
             var versionsStrings = row.Split(' ')[1].Split('-');
+            var buildfac = new BuildInfoFactory();
 
             return new BuildRange() {
-                MinBuild = parseBuildInfo(versionsStrings[0]),
-                MaxBuild = parseBuildInfo(versionsStrings[1])
-            };
-        }
-
-        //7.3.5.25928
-        private BuildInfo parseBuildInfo(string versionString)
-        {
-            string[] parts = versionString.Split('.');
-            return new BuildInfo()
-            {
-                Expansion = int.Parse(parts[0]),
-                Major = int.Parse(parts[1]),
-                Minor = int.Parse(parts[2]),
-                Build = int.Parse(parts[3])
+                MinBuild = buildfac.CreateFromBuildString(versionsStrings[0]),
+                MaxBuild = buildfac.CreateFromBuildString(versionsStrings[1])
             };
         }
 
