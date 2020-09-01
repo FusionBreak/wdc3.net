@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using wdc3.net.dbd.File;
 
 namespace wdc3.net.dbd.Reader
@@ -37,16 +35,14 @@ namespace wdc3.net.dbd.Reader
                 index += foreignInformation.tableName.Length + foreignInformation.columnName.Length + "<::>".Length;
             }
 
-            var name = getName(input, index +1);
+            var name = getName(input, index + 1);
             output.Name = name.output;
             output.Verified = !(name.lastChar == '?');
             index = name.lastIndex;
 
-
             if(input.Contains("//"))
                 output.Comment = input.Split("//")[1].Trim();
-            
-            
+
             return output;
         }
 

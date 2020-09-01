@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace wdc3.net.Table
 {
@@ -11,7 +9,7 @@ namespace wdc3.net.Table
             "int" => typeof(int),
             "float" => typeof(float),
             "string" => typeof(string),
-            "locstring" => typeof(string),     
+            "locstring" => typeof(string),
             _ => throw new NotImplementedException(),
         };
 

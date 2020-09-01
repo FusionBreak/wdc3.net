@@ -6,8 +6,8 @@ namespace wdc3.net.Reader
 {
     public class SectionHeaderReader : IFileReader<IEnumerable<SectionHeader>>
     {
-        BinaryReader _reader;
-        int _sectionCount;
+        private BinaryReader _reader;
+        private int _sectionCount;
         public long Position { get; private set; }
 
         public SectionHeaderReader(BinaryReader reader, int sectionCount)

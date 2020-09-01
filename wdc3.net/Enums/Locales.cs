@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wdc3.net.Enums
+﻿namespace wdc3.net.Enums
 {
     public enum Locales
     {
         None = -1,
         EnUS = 0,
         EnGB = EnUS,
-        KoKR = 1,
         FrFR = 2,
         DeDE = 3,
         EnCN = 4,

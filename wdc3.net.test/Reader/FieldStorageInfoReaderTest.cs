@@ -1,11 +1,8 @@
-using System.Linq;
-using System;
 using System.IO;
+using System.Linq;
+using wdc3.net.File;
 using wdc3.net.Reader;
 using Xunit;
-using System.Collections.Generic;
-using System.Collections;
-using wdc3.net.File;
 
 namespace wdc3.net.test.Reader
 {
@@ -31,7 +28,7 @@ namespace wdc3.net.test.Reader
             reader.BaseStream.Position = 324;
             FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
             var fieldStorageInfos = fieldStorageInfoReader.Read().ToList();
-            
+
             Assert.IsType<FieldStorageInfo>(fieldStorageInfos[0]);
             Assert.Equal(0, fieldStorageInfos[0].FieldOffsetBits);
             Assert.Equal(32, fieldStorageInfos[0].FieldSizeBits);

@@ -7,10 +7,11 @@ namespace wdc3.net.Reader
     public class FieldStorageInfoReader : IFileReader<IEnumerable<IFieldStorageInfo>>
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles")]
-        const int SIZE_OF_FIELD_STORAGE_INFO = 24;
-        BinaryReader _reader;
-        int _totalFieldStorageInfoSize;
-        int fieldStorageInfoCount => _totalFieldStorageInfoSize / SIZE_OF_FIELD_STORAGE_INFO;
+        private const int SIZE_OF_FIELD_STORAGE_INFO = 24;
+
+        private BinaryReader _reader;
+        private int _totalFieldStorageInfoSize;
+        private int fieldStorageInfoCount => _totalFieldStorageInfoSize / SIZE_OF_FIELD_STORAGE_INFO;
         public long Position { get; private set; }
 
         public FieldStorageInfoReader(BinaryReader reader, int totalFieldStorageInfoSize)

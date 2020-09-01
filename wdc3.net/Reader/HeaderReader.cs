@@ -5,8 +5,9 @@ namespace wdc3.net.Reader
 {
     public class HeaderReader : IFileReader<Header>
     {
-        BinaryReader _reader;
+        private BinaryReader _reader;
         public long Position { get; private set; }
+
         public HeaderReader(BinaryReader reader) => _reader = reader;
 
         public Header Read()

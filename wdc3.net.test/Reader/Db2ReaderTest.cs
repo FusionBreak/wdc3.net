@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using wdc3.net.Reader;
 using Xunit;

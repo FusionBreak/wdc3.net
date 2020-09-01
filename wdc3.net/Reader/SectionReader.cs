@@ -7,10 +7,10 @@ namespace wdc3.net.Reader
     public class SectionReader : IFileReader<IEnumerable<ISection>>
     {
         public long Position { get; private set; }
-        BinaryReader _reader;
-        IEnumerable<SectionHeader> _sectionHeaders;
-        ushort _headerFlag;
-        uint _recordSize;
+        private BinaryReader _reader;
+        private IEnumerable<SectionHeader> _sectionHeaders;
+        private ushort _headerFlag;
+        private uint _recordSize;
 
         public SectionReader(BinaryReader reader, IEnumerable<SectionHeader> sectionHeaders, ushort headerFlag, uint recordSize)
         {

@@ -6,8 +6,8 @@ namespace wdc3.net.Reader
 {
     public class FieldStructureReader : IFileReader<IEnumerable<FieldStructure>>
     {
-        BinaryReader _reader;
-        int _totalFieldCount;
+        private BinaryReader _reader;
+        private int _totalFieldCount;
         public long Position { get; private set; }
 
         public FieldStructureReader(BinaryReader reader, int totalFieldCount)

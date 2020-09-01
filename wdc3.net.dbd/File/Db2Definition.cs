@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using wdc3.net.dbd.Factorys;
 
 namespace wdc3.net.dbd.File

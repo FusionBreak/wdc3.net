@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wdc3.net.dbd.Enums
+﻿namespace wdc3.net.dbd.Enums
 {
     internal static class DataChunkNames
     {

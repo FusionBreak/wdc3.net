@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wdc3.net.dbd.File
+﻿namespace wdc3.net.dbd.File
 {
     public class BuildRange
     {

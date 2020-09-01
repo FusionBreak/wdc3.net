@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wdc3.net.dbd.File
+﻿namespace wdc3.net.dbd.File
 {
     public class BuildInfo
     {
@@ -11,9 +7,9 @@ namespace wdc3.net.dbd.File
         public int Minor { get; set; }
         public int Build { get; set; }
 
-        public override bool Equals(object? obj) 
+        public override bool Equals(object? obj)
             => obj is BuildInfo build
-                && build != null 
+                && build != null
                 && build.Expansion == Expansion
                 && build.Major == Major
                 && build.Minor == Minor

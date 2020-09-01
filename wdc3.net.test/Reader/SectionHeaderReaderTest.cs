@@ -1,11 +1,9 @@
-using System.Linq;
-using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using wdc3.net.File;
 using wdc3.net.Reader;
 using Xunit;
-using System.Collections.Generic;
-using System.Collections;
-using wdc3.net.File;
 
 namespace wdc3.net.test.Reader
 {
@@ -31,8 +29,8 @@ namespace wdc3.net.test.Reader
             reader.BaseStream.Position = 72;
             SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, 4);
             var sectionHeaders = sectionHeaderReader.Read().ToList();
-            
-            for (int i = 0; i < TestData.Count; i++)
+
+            for(int i = 0; i < TestData.Count; i++)
             {
                 Assert.Equal(TestData[i].TactKeyHash, sectionHeaders[i].TactKeyHash);
                 Assert.Equal(TestData[i].FileOffset, sectionHeaders[i].FileOffset);

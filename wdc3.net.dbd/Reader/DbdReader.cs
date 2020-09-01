@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using wdc3.net.dbd.Enums;
 using wdc3.net.dbd.File;
 
@@ -13,7 +11,8 @@ namespace wdc3.net.dbd.Reader
         public bool AllLinesReaded => _currentLineNumber >= _allLines?.Length;
         private string[]? _allLines;
         private int _currentLineNumber;
-        private string? CurrentLine => !AllLinesReaded ? _allLines?[_currentLineNumber] : "";     
+        private string? CurrentLine => !AllLinesReaded ? _allLines?[_currentLineNumber] : "";
+
         private bool CurrentLineStartsWithDataChunk
             => CurrentLine != null
                 && (
@@ -24,7 +23,6 @@ namespace wdc3.net.dbd.Reader
                 );
 
         private List<DataChunk> _chunks = new List<DataChunk>();
-
 
         public Db2Definition ReadFile(string path)
         {
@@ -44,22 +42,26 @@ namespace wdc3.net.dbd.Reader
                     case DataChunkNames.COLUMNS:
                         output.ColumnDefinitions = new ColumnDefinitionParser().Parse(chunk).ToList();
                         break;
+
                     case DataChunkNames.LAYOUT:
                         versions.Add(new VersionDefinitionParser().ParseLayout(chunk));
                         break;
+
                     case DataChunkNames.BUILD:
                         versions.Add(new VersionDefinitionParser().ParseBuild(chunk));
                         break;
+
                     case DataChunkNames.COMMENT:
                         output.Comment = chunk.Parameters.First();
                         break;
+
                     default:
                         break;
                 }
             }
 
             output.VersionDefinitions = versions;
-            
+
             return output;
         }
 

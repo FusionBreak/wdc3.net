@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using wdc3.net.dbd.Enums;
 using wdc3.net.dbd.Factorys;
 using wdc3.net.dbd.File;
@@ -76,7 +75,6 @@ namespace wdc3.net.dbd.Reader
             return output;
         }
 
-
         //BUILD 8.0.1.25902, 8.0.1.25976, 8.0.1.26010, 8.0.1.26032, 8.0.1.26095, 8.0.1.26131, 8.0.1.26141, 8.0.1.26175, 8.0.1.26231
         private IEnumerable<BuildInfo> parseBuilds(string row)
         {
@@ -95,7 +93,8 @@ namespace wdc3.net.dbd.Reader
             var versionsStrings = row.Split(' ')[1].Split('-');
             var buildfac = new BuildInfoFactory();
 
-            return new BuildRange() {
+            return new BuildRange()
+            {
                 MinBuild = buildfac.CreateFromBuildString(versionsStrings[0]),
                 MaxBuild = buildfac.CreateFromBuildString(versionsStrings[1])
             };
@@ -109,6 +108,7 @@ namespace wdc3.net.dbd.Reader
             AreaTableID<u16>
             $noninline,relation$MapID<32>
         */
+
         private DefinitionInfo parseDefinitionInfo(string row)
         {
             var output = new DefinitionInfo();

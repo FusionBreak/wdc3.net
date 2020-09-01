@@ -18,7 +18,7 @@ namespace wdc3.net.test.Table
             table.AddColumn("First", typeof(string));
             table.AddColumn("Second", typeof(int));
 
-            table.AddRow(new List<Db2Cell>() { 
+            table.AddRow(new List<Db2Cell>() {
                 new Db2Cell()
                 {
                     ColumnName = "First",
