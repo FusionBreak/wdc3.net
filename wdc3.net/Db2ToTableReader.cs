@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using wdc3.net.dbd.File;
 using wdc3.net.dbd.Reader;
 using wdc3.net.Enums;
 using wdc3.net.Reader;
@@ -27,8 +23,6 @@ namespace wdc3.net
 
             output.Name = db2File.Name;
             output.Locale = ((Locales)db2.Header.Locale).ToString();
-
-            
 
             foreach(var colInfo in new TableColumnInformationFactory().CreateColumnInformation(dbd, db2.Header.LayoutHash))
                 output.AddColumn(colInfo.Name, colInfo.Type);

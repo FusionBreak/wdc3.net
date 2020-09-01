@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using wdc3.net.dbd.File;
 
 namespace wdc3.net.Table
@@ -42,9 +41,8 @@ namespace wdc3.net.Table
                     }
                     else
                         output.Add((colDef.Name, typeParser.Parse(colDef.Type)));
-                }            
+                }
             }
-                
 
             return output;
         }
