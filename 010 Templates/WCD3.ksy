@@ -24,6 +24,10 @@ seq:
   - id: common_data
     size: header.common_data_size
     if: header.common_data_size > 0
+  - id: sections
+    type: section(_index)
+    repeat: expr
+    repeat-expr: header.section_count
 types:
   header:
     seq:
@@ -104,12 +108,83 @@ types:
       - id: storage_type
         type: u4
         enum: field_compression
-      - id: unk_or_unused1
+      - id: data
+        type:
+          switch-on: storage_type
+          cases:
+            field_compression::field_compression_none: default_data
+            field_compression::field_compression_bitpacked: bit_packed_data
+            field_compression::field_compression_common_data: common_data
+            field_compression::field_compression_bitpacked_indexed: bit_packed_indexed_data
+            field_compression::field_compression_bitpacked_indexed_array: bit_packed_indexed_array_data
+            field_compression::field_compression_bitpacked_signed: bit_packed_data
+    types:
+      default_data:
+        seq:
+          - id: unk_or_unused1
+            type: u4
+          - id: unk_or_unused2
+            type: u4
+          - id: unk_or_unused3
+            type: u4
+      bit_packed_data:
+        seq:
+          - id: bitpacking_size_bits
+            type: u4
+          - id: bitpacking_offset_bits
+            type: u4
+          - id: flags
+            type: u4
+      bit_packed_indexed_data:
+        seq:
+          - id: bitpacking_size_bits
+            type: u4
+          - id: bitpacking_offset_bits
+            type: u4
+          - id: unk_or_unused3
+            type: u4
+      bit_packed_indexed_array_data:
+        seq:
+          - id: bitpacking_size_bits
+            type: u4
+          - id: bitpacking_offset_bits
+            type: u4
+          - id: array_count
+            type: u4
+      common_data:
+        seq:
+          - id: default_value
+            type: u4
+          - id: unk_or_unused2
+            type: u4
+          - id: unk_or_unused3
+            type: u4
+  section:
+    params:
+      - id: section_index
         type: u4
-      - id: unk_or_unused2
+    seq:
+      - id: records
+        type: record_data(_root.sections_headers[section_index].record_count)
+        if: (_root.header.flags & 1) == 0
+      - id: string_data
+        size: _root.sections_headers[section_index].string_table_size
+        if: (_root.header.flags & 1) == 0
+      - id: variable_record_data
+        size: _root.sections_headers[section_index].offset_records_end - _root.sections_headers[section_index].file_offset
+        if: (_root.header.flags & 1) != 0
+      - id: id_list
         type: u4
-      - id: unk_or_unused3
-        type: u4
+        repeat: expr
+        repeat-expr: _root.sections_headers[section_index].id_list_size / 4
+    types:
+      record_data:
+        params:
+          - id: data_size
+            type: u4
+        seq:
+          - id: data
+            size: data_size
 enums:
   field_compression:
     0: field_compression_none
