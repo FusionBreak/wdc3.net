@@ -165,7 +165,9 @@ types:
         type: u4
     seq:
       - id: records
-        type: record_data(_root.sections_headers[section_index].record_count)
+        type: record_data(_root.header.record_size)
+        repeat: expr
+        repeat-expr: _root.sections_headers[section_index].record_count
         if: (_root.header.flags & 1) == 0
       - id: string_data
         size: _root.sections_headers[section_index].string_table_size
@@ -177,6 +179,24 @@ types:
         type: u4
         repeat: expr
         repeat-expr: _root.sections_headers[section_index].id_list_size / 4
+      - id: copy_table
+        type: copy_table_entry
+        repeat: expr
+        repeat-expr: _root.sections_headers[section_index].copy_table_count
+        if: _root.sections_headers[section_index].copy_table_count > 0
+      - id: offset_map
+        type: offset_map_entry
+        repeat: expr
+        repeat-expr: _root.sections_headers[section_index].offset_map_id_count
+        if: _root.sections_headers[section_index].offset_map_id_count > 0
+      - id: relationship_map
+        type: relationship_mapping
+        if: _root.sections_headers[section_index].relationship_data_size > 0
+      - id: offset_map_id_list
+        type: u4
+        repeat: expr
+        repeat-expr: _root.sections_headers[section_index].offset_map_id_count
+        if: _root.sections_headers[section_index].offset_map_id_count > 0
     types:
       record_data:
         params:
@@ -185,6 +205,37 @@ types:
         seq:
           - id: data
             size: data_size
+      copy_table_entry:
+        seq:
+          - id: id_of_new_row
+            type: u4
+          - id: id_of_copied_row
+            type: u4
+      offset_map_entry:
+        seq:
+          - id: offset
+            type: u4
+          - id: size
+            type: u2
+      relationship_mapping:
+        seq:
+          - id: num_entries
+            type: u4
+          - id: min_id
+            type: u4
+          - id: max_id
+            type: u4
+          - id: entries
+            type: relationship_entry
+            repeat: expr
+            repeat-expr: num_entries
+        types:
+          relationship_entry:
+            seq:
+              - id: foreign_id
+                type: u4
+              - id: record_index
+                type: u4
 enums:
   field_compression:
     0: field_compression_none
