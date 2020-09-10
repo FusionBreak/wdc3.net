@@ -7,9 +7,9 @@ namespace wdc3.net.Table
 {
     public class TableColumnInformationFactory
     {
-        public IEnumerable<(string Name, Type Type)> CreateColumnInformation(Db2Definition dbd, uint hexLayoutHash)
+        public IEnumerable<ColumnInfo> CreateColumnInformation(Db2Definition dbd, uint hexLayoutHash)
         {
-            var output = new List<(string Name, Type Type)>();
+            var output = new List<ColumnInfo>();
 
             var typeParser = new TableTypeParser();
             var columnDefinitions = dbd.ColumnDefinitions;
@@ -33,14 +33,28 @@ namespace wdc3.net.Table
                         {
                             for(int i = 0; i < definition.ArrayLength; i++)
                             {
-                                output.Add(($"{colDef.Name}[{i}]", typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size)));
+                                output.Add(new ColumnInfo() {
+                                    Name = $"{colDef.Name}[{i}]",
+                                    Type = typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size),
+                                    IsId = definition.IsId
+                                });
                             }
                         }
                         else
-                            output.Add((colDef.Name, typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size)));
+                            output.Add(new ColumnInfo()
+                            {
+                                Name = colDef.Name,
+                                Type = typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size),
+                                IsId = definition.IsId
+                            });
                     }
                     else
-                        output.Add((colDef.Name, typeParser.Parse(colDef.Type)));
+                        output.Add(new ColumnInfo()
+                        {
+                            Name = colDef.Name,
+                            Type = typeParser.Parse(colDef.Type),
+                            IsId = false
+                        });
                 }
             }
 

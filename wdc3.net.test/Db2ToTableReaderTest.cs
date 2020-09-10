@@ -7,8 +7,10 @@ namespace wdc3.net.test
         [Fact]
         public void XXX()
         {
-            var reader = new Db2ToTableReader();
-            var tabel = reader.Read(@"..\..\..\TestFiles\map.db2", @"..\..\..\TestFiles\Map.dbd");
+            //Compare with https://wow.tools/dbc/?dbc=map&build=8.3.7.34872#page=1
+
+            var reader = new Db2ToTableReader(@"..\..\..\TestFiles\map.db2", @"..\..\..\TestFiles\Map.dbd");
+            var tabel = reader.Read();
         }
     }
 }

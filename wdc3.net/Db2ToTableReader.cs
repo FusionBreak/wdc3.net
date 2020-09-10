@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using wdc3.net.dbd.File;
 using wdc3.net.dbd.Reader;
 using wdc3.net.Enums;
+using wdc3.net.File;
 using wdc3.net.Reader;
 using wdc3.net.Table;
 
@@ -9,25 +14,94 @@ namespace wdc3.net
 {
     public class Db2ToTableReader
     {
-        public Db2Table Read(string db2Path, string dbdPath)
+        private FileInfo Db2File { get; set; }
+        private FileInfo DbdFile { get; set; }
+        private Db2 Db2 { get; set; }
+        private Db2Definition Dbd { get; set; }
+
+        private uint MinRowId => Db2.Header!.MinId;
+        private uint MaxRowId => Db2.Header!.MaxId;
+        private bool AllRowsReaded => _currentRowId >= MaxRowId;
+
+        private uint _currentRowId;
+
+        public Db2ToTableReader(string db2Path, string dbdPath)
+        {
+            Db2File = new FileInfo(db2Path);
+            DbdFile = new FileInfo(dbdPath);
+            Db2 = new Db2Reader().ReadFile(Db2File.FullName);
+            Dbd = new DbdReader().ReadFile(DbdFile.FullName);
+            _currentRowId = MinRowId;
+        }
+
+        public Db2Table Read()
         {
             var output = new Db2Table();
 
-            var db2File = new FileInfo(db2Path);
-            var dbdFile = new FileInfo(dbdPath);
-            var db2 = new Db2Reader().ReadFile(db2File.FullName);
-            var dbd = new DbdReader().ReadFile(dbdFile.FullName);
-
-            if(db2.Header == null)
+            if(Db2.Header == null)
                 throw new Exception();
 
-            output.Name = db2File.Name;
-            output.Locale = ((Locales)db2.Header.Locale).ToString();
+            output.Name = Db2File.Name;
+            output.Locale = ((Locales)Db2.Header.Locale).ToString();
 
-            foreach(var colInfo in new TableColumnInformationFactory().CreateColumnInformation(dbd, db2.Header.LayoutHash))
-                output.AddColumn(colInfo.Name, colInfo.Type);
+
+            var colInfos = new TableColumnInformationFactory().CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
+
+            //Read Columns
+            foreach(var colInfo in colInfos)
+                if(colInfo != null && colInfo.Name != null && colInfo.Type != null)
+                    output.AddColumn(colInfo.Name, colInfo.Type);
+
+
+            //Read Rows
+            //while(!AllRowsReaded)
+            //{
+            //    List<Db2Cell> row = new List<Db2Cell>();
+            //    foreach(var colInfo in colInfos)
+            //    {
+            //        if(colInfo != null && colInfo.Name != null && colInfo.Type != null)
+            //        {
+            //            if(colInfo.IsId)
+            //                row.Add(new Db2Cell() { ColumnName = colInfo.Name, Value = _currentRowId });
+            //            else
+            //                row.Add(new Db2Cell() { ColumnName = colInfo.Name, Value = null });
+            //        }
+            //    }
+            //    output.AddRow(row);
+            //    _currentRowId++;
+
+            if(Db2.Sections == null)
+                throw new Exception();
+
+            List<uint> test = new List<uint>();
+            foreach(var section in Db2.Sections)
+            {
+                if(section.IdList == null)
+                    throw new Exception();
+
+                foreach(var id in section.IdList)
+                {
+                    _currentRowId = id;
+                    List<Db2Cell> row = new List<Db2Cell>();
+                    row.Add(new Db2Cell() { ColumnName = colInfos.Where(col => col.IsId).First().Name, Value = _currentRowId });
+                    test.Add(_currentRowId);
+                    output.AddRow(row);
+                }
+            }
+
+            test = test.OrderBy(x => x).ToList();
+
 
             return output;
         }
+
+        //private Db2Cell readCell(ColumnInfo columnInfo)
+        //{
+        //    if(columnInfo == null || columnInfo.Name == null || columnInfo.Type == null)
+        //        throw new NullReferenceException();
+
+
+        //    return new Db2Cell();
+        //}
     }
 }
