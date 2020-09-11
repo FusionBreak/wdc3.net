@@ -1,0 +1,13 @@
+﻿@page "/"
+
+<table>
+    @foreach(var Row in Table.GetValues())
+    {
+        <tr>
+            @foreach(var column in Row)
+            {
+                <td>@column</td>
+            }
+        </tr>
+    }
+</table>

@@ -14,7 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdc3.net.test", "wdc3.net.t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdc3.net.dbd", "wdc3.net.dbd\wdc3.net.dbd.csproj", "{8AF3930A-3161-4872-A381-BCDA86D85197}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdc3.net.dbd.test", "wdc3.net.dbd.test\wdc3.net.dbd.test.csproj", "{B0E7485F-F7F7-448A-9172-11B376F4F3E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdc3.net.dbd.test", "wdc3.net.dbd.test\wdc3.net.dbd.test.csproj", "{B0E7485F-F7F7-448A-9172-11B376F4F3E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdc3.net.gui", "wdc3.net.gui\wdc3.net.gui.csproj", "{66D11381-3A4B-4820-8CA5-699D2D5723FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{B0E7485F-F7F7-448A-9172-11B376F4F3E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0E7485F-F7F7-448A-9172-11B376F4F3E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0E7485F-F7F7-448A-9172-11B376F4F3E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

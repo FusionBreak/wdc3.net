@@ -73,7 +73,6 @@ namespace wdc3.net
             if(Db2.Sections == null)
                 throw new Exception();
 
-            List<uint> test = new List<uint>();
             foreach(var section in Db2.Sections)
             {
                 if(section.IdList == null)
@@ -84,12 +83,18 @@ namespace wdc3.net
                     _currentRowId = id;
                     List<Db2Cell> row = new List<Db2Cell>();
                     row.Add(new Db2Cell() { ColumnName = colInfos.Where(col => col.IsId).First().Name, Value = _currentRowId });
-                    test.Add(_currentRowId);
+
+                    foreach(var col in colInfos)
+                    {
+                        if(col.Type == typeof(string))
+                            row.Add(new Db2Cell() { ColumnName = col.Name, Value = "Lorem Ipsum" });
+                        if(!col.IsId)
+                            row.Add(new Db2Cell() { ColumnName = col.Name, Value = null });
+                    }
+
                     output.AddRow(row);
                 }
             }
-
-            test = test.OrderBy(x => x).ToList();
 
 
             return output;

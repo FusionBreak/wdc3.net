@@ -25,7 +25,7 @@ namespace wdc3.net.Table
         {
             foreach(var column in _columns)
             {
-                yield return Convert.ChangeType(row.First(cell => cell.ColumnName == column.Key).Value, column.Value);
+                yield return row.First(cell => cell.ColumnName == column.Key).Value; //Convert.ChangeType(row.First(cell => cell.ColumnName == column.Key).Value, column.Value);
             }
         }
 
