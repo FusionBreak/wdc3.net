@@ -86,10 +86,12 @@ namespace wdc3.net
 
                     foreach(var col in colInfos)
                     {
-                        if(col.Type == typeof(string))
-                            row.Add(new Db2Cell() { ColumnName = col.Name, Value = "Lorem Ipsum" });
                         if(!col.IsId)
-                            row.Add(new Db2Cell() { ColumnName = col.Name, Value = null });
+                        {
+                            row.Add(col.Type == typeof(string)
+                                ? new Db2Cell() {ColumnName = col.Name, Value = "Lorem Ipsum"}
+                                : new Db2Cell() {ColumnName = col.Name, Value = null});
+                        }
                     }
 
                     output.AddRow(row);
