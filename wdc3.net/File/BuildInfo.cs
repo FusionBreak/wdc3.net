@@ -1,4 +1,6 @@
-﻿namespace wdc3.net.File
+﻿using System;
+
+namespace wdc3.net.File
 {
     public class BuildInfo
     {
@@ -14,5 +16,6 @@
                 && build.Major == Major
                 && build.Minor == Minor
                 && build.Build == Build;
+        public override int GetHashCode() => HashCode.Combine(Expansion, Major, Minor, Build);
     }
 }
