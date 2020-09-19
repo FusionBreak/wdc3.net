@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using wdc3.net.dbd.File;
-using wdc3.net.dbd.Reader;
-using wdc3.net.Enums;
 using wdc3.net.File;
 using wdc3.net.Reader;
+using wdc3.net.Enums;
 using wdc3.net.Table;
 
 namespace wdc3.net

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using wdc3.net.dbd.Enums;
-using wdc3.net.dbd.File;
+using wdc3.net.Enums;
+using wdc3.net.File;
 
-namespace wdc3.net.dbd.Reader
+namespace wdc3.net.Reader
 {
     public class DbdReader
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using wdc3.net.dbd.File;
+using wdc3.net.File;
 
-namespace wdc3.net.dbd.Reader
+namespace wdc3.net.Reader
 {
     internal class ColumnDefinitionParser
     {

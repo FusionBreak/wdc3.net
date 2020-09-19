@@ -1,4 +1,4 @@
-﻿namespace wdc3.net.dbd.Enums
+﻿namespace wdc3.net.Enums
 {
     internal static class DataChunkNames
     {

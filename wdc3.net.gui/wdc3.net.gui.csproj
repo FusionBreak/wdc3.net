@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\wdc3.net.dbd\wdc3.net.dbd.csproj" />
     <ProjectReference Include="..\wdc3.net\wdc3.net.csproj" />
   </ItemGroup>
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using wdc3.net.dbd.File;
+using wdc3.net.File;
 
 namespace wdc3.net.Table
 {

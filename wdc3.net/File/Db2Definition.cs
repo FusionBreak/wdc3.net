@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using wdc3.net.dbd.Factorys;
+using wdc3.net.Factorys;
 
-namespace wdc3.net.dbd.File
+namespace wdc3.net.File
 {
     public class Db2Definition
     {

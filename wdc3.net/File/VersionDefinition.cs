@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace wdc3.net.dbd.File
+namespace wdc3.net.File
 {
     public class VersionDefinition
     {

@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\wdc3.net.dbd\wdc3.net.dbd.csproj" />
-  </ItemGroup>
-
 </Project>

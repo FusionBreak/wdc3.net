@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using wdc3.net.dbd.Reader;
+using wdc3.net.Reader;
 using Xunit;
 
-namespace wdc3.net.dbd.test.Reader
+namespace wdc3.net.test.Reader
 {
     public class DbdReaderTest
     {

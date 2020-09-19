@@ -1,4 +1,4 @@
-﻿namespace wdc3.net.dbd.File
+﻿namespace wdc3.net.File
 {
     public class ColumnDefinition
     {

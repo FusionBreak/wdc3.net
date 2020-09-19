@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace wdc3.net.dbd.Reader
+namespace wdc3.net.Reader
 {
     internal class DataChunk
     {
