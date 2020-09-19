@@ -10,7 +10,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadCorrectNumberOfFieldStructures()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 232;
             FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);
@@ -22,7 +22,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadFieldStructuresCorrectly()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 232;
             FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);

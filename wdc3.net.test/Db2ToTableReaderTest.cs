@@ -9,7 +9,7 @@ namespace wdc3.net.test
         {
             //Compare with https://wow.tools/dbc/?dbc=map&build=8.3.7.34872#page=1
 
-            var reader = new Db2ToTableReader(@"..\..\..\TestFiles\map.db2", @"..\..\..\TestFiles\Map.dbd");
+            var reader = new Db2ToTableReader(TestFiles.MAP_DB2_PATH, TestFiles.MAP_DBD_PATH);
             var table = reader.Read();
             _ = table;
         }

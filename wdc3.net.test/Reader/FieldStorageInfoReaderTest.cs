@@ -11,7 +11,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadCorrectNumberOfFieldStorageInfos()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 324;
             var fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
@@ -23,7 +23,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadFieldStorageInfoCorrectly()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 324;
             var fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);

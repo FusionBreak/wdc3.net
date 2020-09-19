@@ -12,7 +12,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadCorrectNumberOfSectionHeaders()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 72;
             SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, 4);
@@ -24,7 +24,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadSectionHeadersCorrectly()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 72;
             SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, 4);

@@ -9,7 +9,7 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadHeaderCorrectly()
         {
-            var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
+            var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
             BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
             HeaderReader headerReader = new HeaderReader(reader);
             var header = headerReader.Read();
