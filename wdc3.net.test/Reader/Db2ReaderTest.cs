@@ -9,9 +9,10 @@ namespace wdc3.net.test.Reader
         [Fact]
         public void ReadsTheWholeFile()
         {
-            FileInfo mapDb2 = new FileInfo(@"..\..\..\TestFiles\map.db2");
-            Db2Reader reader = new Db2Reader();
+            var mapDb2 = new FileInfo(@"..\..\..\TestFiles\map.db2");
+            var reader = new Db2Reader();
             var db2 = reader.ReadFile(mapDb2.FullName);
+            _ = db2;
             Assert.Equal(mapDb2.Length, reader.BytesReaded);
         }
     }

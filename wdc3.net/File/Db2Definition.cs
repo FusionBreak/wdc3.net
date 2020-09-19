@@ -11,14 +11,14 @@ namespace wdc3.net.File
         public IEnumerable<VersionDefinition>? VersionDefinitions { get; set; }
         public string? Comment { get; set; }
 
-        public VersionDefinition GetVersionDefinition(string buildString)
+        public VersionDefinition? GetVersionDefinition(string buildString)
             => VersionDefinitions
-                .Where(version => version.Builds != null && version.Builds.Contains(new BuildInfoFactory().CreateFromBuildString(buildString)))
+                ?.Where(version => version.Builds != null && version.Builds.Contains(BuildInfoFactory.CreateFromBuildString(buildString)))
                 .First();
 
-        public VersionDefinition GetVersionDefinition(uint hexLayoutHash)
+        public VersionDefinition? GetVersionDefinition(uint hexLayoutHash)
             => VersionDefinitions
-                .Where(version => version.LayoutHashes != null && version.LayoutHashes.Contains(hexLayoutHash.ToString("X4")))
+                ?.Where(version => version.LayoutHashes != null && version.LayoutHashes.Contains(hexLayoutHash.ToString("X4")))
                 .First();
     }
 }

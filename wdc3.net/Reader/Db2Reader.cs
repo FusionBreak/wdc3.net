@@ -39,7 +39,7 @@ namespace wdc3.net.Reader
             return db;
         }
 
-        public IEnumerable<byte> ReadPalletData(BinaryReader reader, int palletDataSize)
+        public static IEnumerable<byte> ReadPalletData(BinaryReader reader, int palletDataSize)
         {
             var output = new List<byte>();
 
@@ -49,7 +49,7 @@ namespace wdc3.net.Reader
             return output;
         }
 
-        public IEnumerable<byte> ReadCommonData(BinaryReader reader, int commonDataSize)
+        public static IEnumerable<byte> ReadCommonData(BinaryReader reader, int commonDataSize)
         {
             var output = new List<byte>();
 

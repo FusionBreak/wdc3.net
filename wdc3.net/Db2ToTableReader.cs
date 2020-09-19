@@ -17,8 +17,8 @@ namespace wdc3.net
         private Db2Definition Dbd { get; set; }
 
         private uint MinRowId => Db2.Header!.MinId;
-        private uint MaxRowId => Db2.Header!.MaxId;
-        private bool AllRowsReaded => _currentRowId >= MaxRowId;
+        //private uint MaxRowId => Db2.Header!.MaxId;
+        //private bool AllRowsReaded => _currentRowId >= MaxRowId;
 
         private uint _currentRowId;
 

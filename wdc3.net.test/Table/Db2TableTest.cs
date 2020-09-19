@@ -9,9 +9,11 @@ namespace wdc3.net.test.Table
         [Fact]
         public void XXX()
         {
-            var table = new Db2Table();
-            table.Name = "Testtable";
-            table.Locale = "xx-XX";
+            var table = new Db2Table
+            {
+                Name = "Testtable",
+                Locale = "xx-XX"
+            };
 
             table.AddColumn("First", typeof(string));
             table.AddColumn("Second", typeof(int));
@@ -48,6 +50,8 @@ namespace wdc3.net.test.Table
                 {
                     var value = b;
                     var type = b.GetType();
+                    _ = value;
+                    _ = type;
                 }
             }
         }

@@ -12,9 +12,9 @@ namespace wdc3.net.test.Reader
         public void ReadCorrectNumberOfFieldStorageInfos()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 324;
-            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
+            var fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
             var fieldStorageInfos = fieldStorageInfoReader.Read();
 
             Assert.Equal(23, fieldStorageInfos.Count());
@@ -24,9 +24,9 @@ namespace wdc3.net.test.Reader
         public void ReadFieldStorageInfoCorrectly()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(@"..\..\..\TestFiles\map.db2");
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 324;
-            FieldStorageInfoReader fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
+            var fieldStorageInfoReader = new FieldStorageInfoReader(reader, 552);
             var fieldStorageInfos = fieldStorageInfoReader.Read().ToList();
 
             Assert.IsType<FieldStorageInfo>(fieldStorageInfos[0]);

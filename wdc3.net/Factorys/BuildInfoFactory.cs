@@ -4,7 +4,7 @@ namespace wdc3.net.Factorys
 {
     public class BuildInfoFactory
     {
-        public BuildInfo CreateFromBuildString(string buildString)
+        public static BuildInfo CreateFromBuildString(string buildString)
         {
             var parts = buildString.Split('.');
             return new BuildInfo()

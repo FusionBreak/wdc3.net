@@ -44,11 +44,11 @@ namespace wdc3.net.Reader
                         break;
 
                     case DataChunkNames.LAYOUT:
-                        versions.Add(new VersionDefinitionParser().ParseLayout(chunk));
+                        versions.Add(VersionDefinitionParser.ParseLayout(chunk));
                         break;
 
                     case DataChunkNames.BUILD:
-                        versions.Add(new VersionDefinitionParser().ParseBuild(chunk));
+                        versions.Add(VersionDefinitionParser.ParseBuild(chunk));
                         break;
 
                     case DataChunkNames.COMMENT:

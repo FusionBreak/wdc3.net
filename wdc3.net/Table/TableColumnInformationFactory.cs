@@ -13,7 +13,7 @@ namespace wdc3.net.Table
 
             var typeParser = new TableTypeParser();
             var columnDefinitions = dbd.ColumnDefinitions;
-            var definitions = dbd.GetVersionDefinition(hexLayoutHash).Definitions;
+            var definitions = dbd.GetVersionDefinition(hexLayoutHash)?.Definitions;
 
             if(columnDefinitions == null)
                 throw new Exception();

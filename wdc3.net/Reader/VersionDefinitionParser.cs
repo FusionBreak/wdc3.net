@@ -9,7 +9,7 @@ namespace wdc3.net.Reader
 {
     internal class VersionDefinitionParser
     {
-        public VersionDefinition ParseLayout(DataChunk chunk)
+        public static VersionDefinition ParseLayout(DataChunk chunk)
         {
             var output = new VersionDefinition();
             var builds = new List<BuildInfo>();
@@ -37,7 +37,7 @@ namespace wdc3.net.Reader
             return output;
         }
 
-        public VersionDefinition ParseBuild(DataChunk chunk)
+        public static VersionDefinition ParseBuild(DataChunk chunk)
         {
             var output = new VersionDefinition();
             var builds = new List<BuildInfo>();
@@ -78,27 +78,26 @@ namespace wdc3.net.Reader
         }
 
         //BUILD 8.0.1.25902, 8.0.1.25976, 8.0.1.26010, 8.0.1.26032, 8.0.1.26095, 8.0.1.26131, 8.0.1.26141, 8.0.1.26175, 8.0.1.26231
-        private IEnumerable<BuildInfo> parseBuilds(string row)
+        private static IEnumerable<BuildInfo> parseBuilds(string row)
         {
             var versionStrings = row.Split(' ')[1..].Select(a => a.Replace(",", ""));
             var buildfac = new BuildInfoFactory();
 
             foreach(var versionString in versionStrings)
             {
-                yield return buildfac.CreateFromBuildString(versionString);
+                yield return BuildInfoFactory.CreateFromBuildString(versionString);
             }
         }
 
         //BUILD 7.3.5.25600-7.3.5.25928
-        private BuildRange parseBuildRange(string row)
+        private static BuildRange parseBuildRange(string row)
         {
             var versionsStrings = row.Split(' ')[1].Split('-');
-            var buildfac = new BuildInfoFactory();
 
             return new BuildRange()
             {
-                MinBuild = buildfac.CreateFromBuildString(versionsStrings[0]),
-                MaxBuild = buildfac.CreateFromBuildString(versionsStrings[1])
+                MinBuild = BuildInfoFactory.CreateFromBuildString(versionsStrings[0]),
+                MaxBuild = BuildInfoFactory.CreateFromBuildString(versionsStrings[1])
             };
         }
 
@@ -111,7 +110,7 @@ namespace wdc3.net.Reader
             $noninline,relation$MapID<32>
         */
 
-        private DefinitionInfo parseDefinitionInfo(string row)
+        private static DefinitionInfo parseDefinitionInfo(string row)
         {
             var output = new DefinitionInfo();
 
