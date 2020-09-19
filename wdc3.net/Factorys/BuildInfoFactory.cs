@@ -6,7 +6,7 @@ namespace wdc3.net.Factorys
     {
         public BuildInfo CreateFromBuildString(string buildString)
         {
-            string[] parts = buildString.Split('.');
+            var parts = buildString.Split('.');
             return new BuildInfo()
             {
                 Expansion = int.Parse(parts[0]),

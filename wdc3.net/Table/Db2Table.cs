@@ -29,7 +29,7 @@ namespace wdc3.net.Table
             }
         }
 
-        private List<IEnumerable<Db2Cell>> _rows = new List<IEnumerable<Db2Cell>>();
-        private Dictionary<string, Type> _columns = new Dictionary<string, Type>();
+        private readonly List<IEnumerable<Db2Cell>> _rows = new List<IEnumerable<Db2Cell>>();
+        private readonly Dictionary<string, Type> _columns = new Dictionary<string, Type>();
     }
 }

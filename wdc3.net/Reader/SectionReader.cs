@@ -7,10 +7,10 @@ namespace wdc3.net.Reader
     public class SectionReader : IFileReader<IEnumerable<ISection>>
     {
         public long Position { get; private set; }
-        private BinaryReader _reader;
-        private IEnumerable<SectionHeader> _sectionHeaders;
-        private ushort _headerFlag;
-        private uint _recordSize;
+        private readonly BinaryReader _reader;
+        private readonly IEnumerable<SectionHeader> _sectionHeaders;
+        private readonly ushort _headerFlag;
+        private readonly uint _recordSize;
 
         public SectionReader(BinaryReader reader, IEnumerable<SectionHeader> sectionHeaders, ushort headerFlag, uint recordSize)
         {
@@ -26,46 +26,50 @@ namespace wdc3.net.Reader
 
             foreach(var sectionHeader in _sectionHeaders)
             {
-                ISection section;
-                if((_headerFlag & 1) == 0)
-                    section = readSection(sectionHeader.RecordCount, sectionHeader.StringTableSize);
-                else
-                    section = readSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset);
+                var section = (_headerFlag & 1) == 0
+                    ? readSection(sectionHeader.RecordCount, sectionHeader.StringTableSize)
+                    : (ISection)readSectionWithFlag(sectionHeader.OffsetRecordsEnd - sectionHeader.FileOffset);
 
                 var idList = new List<uint>();
-                for(int i = 0; i < sectionHeader.IdListSize / 4; i++)
+                for(var i = 0; i < sectionHeader.IdListSize / 4; i++)
                     idList.Add(_reader.ReadUInt32());
                 section.IdList = idList;
 
                 if(sectionHeader.CopyTableCount > 0)
                 {
-                    var copyTable = new CopyTableEntry();
-                    copyTable.IdOfNewRow = _reader.ReadUInt32();
-                    copyTable.IdOfCopiedRow = _reader.ReadUInt32();
+                    var copyTable = new CopyTableEntry
+                    {
+                        IdOfNewRow = _reader.ReadUInt32(),
+                        IdOfCopiedRow = _reader.ReadUInt32()
+                    };
                     section.CopyTable = copyTable;
                 }
 
                 if(sectionHeader.OffsetMapIdCount > 0)
                 {
-                    var offsetMap = new OffsetMapEntry();
-                    offsetMap.Offset = _reader.ReadUInt32();
-                    offsetMap.Size = _reader.ReadUInt16();
+                    var offsetMap = new OffsetMapEntry
+                    {
+                        Offset = _reader.ReadUInt32(),
+                        Size = _reader.ReadUInt16()
+                    };
                     section.OffsetMap = offsetMap;
                 }
 
                 if(sectionHeader.RelationsshipDataSize > 0)
                 {
-                    var relationshipMap = new RelationshipMapping();
-                    relationshipMap.NumEntries = _reader.ReadUInt32();
-                    relationshipMap.MinId = _reader.ReadUInt32();
-                    relationshipMap.MaxId = _reader.ReadUInt32();
+                    var relationshipMap = new RelationshipMapping
+                    {
+                        NumEntries = _reader.ReadUInt32(),
+                        MinId = _reader.ReadUInt32(),
+                        MaxId = _reader.ReadUInt32()
+                    };
                     section.RelationshipMap = relationshipMap;
                 }
 
                 if(sectionHeader.OffsetMapIdCount > 0)
                 {
                     var offsetMapIdList = new List<uint>();
-                    for(int i = 0; i < sectionHeader.OffsetMapIdCount; i++)
+                    for(var i = 0; i < sectionHeader.OffsetMapIdCount; i++)
                         offsetMapIdList.Add(_reader.ReadUInt32());
                     section.OffsetMapIdList = offsetMapIdList;
                 }
@@ -82,7 +86,7 @@ namespace wdc3.net.Reader
             var output = new SectionWithFlag();
 
             var variableRecordData = new List<byte>();
-            for(int currentByte = 0; currentByte < variableRecordDataLength; currentByte++)
+            for(var currentByte = 0; currentByte < variableRecordDataLength; currentByte++)
                 variableRecordData.Add(_reader.ReadByte());
 
             output.VariableRecordData = variableRecordData;
@@ -95,10 +99,10 @@ namespace wdc3.net.Reader
             var output = new Section();
 
             var records = new List<RecordData>();
-            for(int currentRecord = 0; currentRecord < recordCount; currentRecord++)
+            for(var currentRecord = 0; currentRecord < recordCount; currentRecord++)
             {
                 var data = new List<byte>();
-                for(int currentData = 0; currentData < _recordSize; currentData++)
+                for(var currentData = 0; currentData < _recordSize; currentData++)
                     data.Add(_reader.ReadByte());
 
                 records.Add(new RecordData() { Data = data });
@@ -106,7 +110,7 @@ namespace wdc3.net.Reader
             output.Records = records;
 
             var stringData = new List<byte>();
-            for(int i = 0; i < stringTableSize; i++)
+            for(var i = 0; i < stringTableSize; i++)
                 stringData.Add(_reader.ReadByte());
             output.StringData = stringData;
 

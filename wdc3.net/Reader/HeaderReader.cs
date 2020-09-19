@@ -5,34 +5,35 @@ namespace wdc3.net.Reader
 {
     public class HeaderReader : IFileReader<Header>
     {
-        private BinaryReader _reader;
+        private readonly BinaryReader _reader;
         public long Position { get; private set; }
 
         public HeaderReader(BinaryReader reader) => _reader = reader;
 
         public Header Read()
         {
-            var output = new Header();
-
-            output.Magic = _reader.ReadInt32();
-            output.RecordCount = _reader.ReadUInt32();
-            output.FieldCount = _reader.ReadUInt32();
-            output.RecordSize = _reader.ReadUInt32();
-            output.StringTableSize = _reader.ReadUInt32();
-            output.TableHash = _reader.ReadUInt32();
-            output.LayoutHash = _reader.ReadUInt32();
-            output.MinId = _reader.ReadUInt32();
-            output.MaxId = _reader.ReadUInt32();
-            output.Locale = _reader.ReadUInt32();
-            output.Flags = _reader.ReadUInt16();
-            output.IdIndex = _reader.ReadUInt16();
-            output.TotalFieldCount = _reader.ReadUInt32();
-            output.BitpackedDataOffset = _reader.ReadUInt32();
-            output.LookUpColumnCount = _reader.ReadUInt32();
-            output.FieldStorageInfoSize = _reader.ReadUInt32();
-            output.CommonDataSize = _reader.ReadUInt32();
-            output.PalletDataSize = _reader.ReadUInt32();
-            output.SectionCount = _reader.ReadUInt32();
+            var output = new Header
+            {
+                Magic = _reader.ReadInt32(),
+                RecordCount = _reader.ReadUInt32(),
+                FieldCount = _reader.ReadUInt32(),
+                RecordSize = _reader.ReadUInt32(),
+                StringTableSize = _reader.ReadUInt32(),
+                TableHash = _reader.ReadUInt32(),
+                LayoutHash = _reader.ReadUInt32(),
+                MinId = _reader.ReadUInt32(),
+                MaxId = _reader.ReadUInt32(),
+                Locale = _reader.ReadUInt32(),
+                Flags = _reader.ReadUInt16(),
+                IdIndex = _reader.ReadUInt16(),
+                TotalFieldCount = _reader.ReadUInt32(),
+                BitpackedDataOffset = _reader.ReadUInt32(),
+                LookUpColumnCount = _reader.ReadUInt32(),
+                FieldStorageInfoSize = _reader.ReadUInt32(),
+                CommonDataSize = _reader.ReadUInt32(),
+                PalletDataSize = _reader.ReadUInt32(),
+                SectionCount = _reader.ReadUInt32()
+            };
 
             Position = _reader.BaseStream.Position;
 

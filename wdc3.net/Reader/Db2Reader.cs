@@ -43,7 +43,7 @@ namespace wdc3.net.Reader
         {
             var output = new List<byte>();
 
-            for(int currentPalletData = 0; currentPalletData < palletDataSize; currentPalletData++)
+            for(var currentPalletData = 0; currentPalletData < palletDataSize; currentPalletData++)
                 output.Add(reader.ReadByte());
 
             return output;
@@ -53,7 +53,7 @@ namespace wdc3.net.Reader
         {
             var output = new List<byte>();
 
-            for(int currentCommonData = 0; currentCommonData < commonDataSize; currentCommonData++)
+            for(var currentCommonData = 0; currentCommonData < commonDataSize; currentCommonData++)
                 output.Add(reader.ReadByte());
 
             return output;

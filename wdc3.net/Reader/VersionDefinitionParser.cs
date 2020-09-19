@@ -47,15 +47,17 @@ namespace wdc3.net.Reader
             if(chunk.Content == null || chunk.Parameters == null)
                 throw new Exception();
 
-            string firstRow = chunk.Name + " ";
+            var firstRow = chunk.Name + " ";
 
             foreach(var para in chunk.Parameters)
                 firstRow += para + ", ";
 
             firstRow = firstRow.TrimEnd(' ').TrimEnd(',');
 
-            var rows = new List<string>();
-            rows.Add(firstRow);
+            var rows = new List<string>
+            {
+                firstRow
+            };
             rows.AddRange(chunk.Content);
 
             foreach(var row in rows)

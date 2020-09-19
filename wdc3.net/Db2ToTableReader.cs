@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using wdc3.net.Enums;
 using wdc3.net.File;
 using wdc3.net.Reader;
-using wdc3.net.Enums;
 using wdc3.net.Table;
 
 namespace wdc3.net
@@ -43,7 +42,7 @@ namespace wdc3.net
             output.Locale = ((Locales)Db2.Header.Locale).ToString();
 
 
-            var colInfos = new TableColumnInformationFactory().CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
+            var colInfos = TableColumnInformationFactory.CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
 
             //Read Columns
             foreach(var colInfo in colInfos)
@@ -79,16 +78,18 @@ namespace wdc3.net
                 foreach(var id in section.IdList)
                 {
                     _currentRowId = id;
-                    List<Db2Cell> row = new List<Db2Cell>();
-                    row.Add(new Db2Cell() { ColumnName = colInfos.Where(col => col.IsId).First().Name, Value = _currentRowId });
+                    var row = new List<Db2Cell>
+                    {
+                        new Db2Cell() { ColumnName = colInfos.Where(col => col.IsId).First().Name, Value = _currentRowId }
+                    };
 
                     foreach(var col in colInfos)
                     {
                         if(!col.IsId)
                         {
                             row.Add(col.Type == typeof(string)
-                                ? new Db2Cell() {ColumnName = col.Name, Value = "Lorem Ipsum"}
-                                : new Db2Cell() {ColumnName = col.Name, Value = null});
+                                ? new Db2Cell() { ColumnName = col.Name, Value = "Lorem Ipsum" }
+                                : new Db2Cell() { ColumnName = col.Name, Value = null });
                         }
                     }
 

@@ -9,9 +9,9 @@ namespace wdc3.net.Reader
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles")]
         private const int SIZE_OF_FIELD_STORAGE_INFO = 24;
 
-        private BinaryReader _reader;
-        private int _totalFieldStorageInfoSize;
-        private int fieldStorageInfoCount => _totalFieldStorageInfoSize / SIZE_OF_FIELD_STORAGE_INFO;
+        private readonly BinaryReader _reader;
+        private readonly int _totalFieldStorageInfoSize;
+        private int FieldStorageInfoCount => _totalFieldStorageInfoSize / SIZE_OF_FIELD_STORAGE_INFO;
         public long Position { get; private set; }
 
         public FieldStorageInfoReader(BinaryReader reader, int totalFieldStorageInfoSize)
@@ -24,15 +24,15 @@ namespace wdc3.net.Reader
         {
             var output = new List<IFieldStorageInfo>();
 
-            for(int currentFieldStorageCount = 0; currentFieldStorageCount < fieldStorageInfoCount; currentFieldStorageCount++)
+            for(var currentFieldStorageCount = 0; currentFieldStorageCount < FieldStorageInfoCount; currentFieldStorageCount++)
             {
-                ushort fieldOffsetBits = _reader.ReadUInt16();
-                ushort fieldSizeBits = _reader.ReadUInt16();
-                uint additionalDataSize = _reader.ReadUInt32();
+                var fieldOffsetBits = _reader.ReadUInt16();
+                var fieldSizeBits = _reader.ReadUInt16();
+                var additionalDataSize = _reader.ReadUInt32();
                 var storageType = (FieldCompressions)_reader.ReadInt32();
-                uint value1 = _reader.ReadUInt32();
-                uint value2 = _reader.ReadUInt32();
-                uint value3 = _reader.ReadUInt32();
+                var value1 = _reader.ReadUInt32();
+                var value2 = _reader.ReadUInt32();
+                var value3 = _reader.ReadUInt32();
 
                 IFieldStorageInfo fieldStorageInfo = storageType switch
                 {

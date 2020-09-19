@@ -6,8 +6,8 @@ namespace wdc3.net.Reader
 {
     public class FieldStructureReader : IFileReader<IEnumerable<FieldStructure>>
     {
-        private BinaryReader _reader;
-        private int _totalFieldCount;
+        private readonly BinaryReader _reader;
+        private readonly int _totalFieldCount;
         public long Position { get; private set; }
 
         public FieldStructureReader(BinaryReader reader, int totalFieldCount)
@@ -20,12 +20,13 @@ namespace wdc3.net.Reader
         {
             var output = new List<FieldStructure>();
 
-            for(int currentStructureCount = 0; currentStructureCount < _totalFieldCount; currentStructureCount++)
+            for(var currentStructureCount = 0; currentStructureCount < _totalFieldCount; currentStructureCount++)
             {
-                var structure = new FieldStructure();
-
-                structure.Size = _reader.ReadInt16();
-                structure.Position = _reader.ReadUInt16();
+                var structure = new FieldStructure
+                {
+                    Size = _reader.ReadInt16(),
+                    Position = _reader.ReadUInt16()
+                };
 
                 output.Add(structure);
             }

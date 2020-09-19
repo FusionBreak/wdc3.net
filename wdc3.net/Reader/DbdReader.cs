@@ -40,7 +40,7 @@ namespace wdc3.net.Reader
                 switch(chunk.Name)
                 {
                     case DataChunkNames.COLUMNS:
-                        output.ColumnDefinitions = new ColumnDefinitionParser().Parse(chunk).ToList();
+                        output.ColumnDefinitions = ColumnDefinitionParser.Parse(chunk).ToList();
                         break;
 
                     case DataChunkNames.LAYOUT:
@@ -52,7 +52,7 @@ namespace wdc3.net.Reader
                         break;
 
                     case DataChunkNames.COMMENT:
-                        output.Comment = chunk.Parameters.First();
+                        output.Comment = chunk.Parameters?.First();
                         break;
 
                     default:
@@ -71,11 +71,11 @@ namespace wdc3.net.Reader
             {
                 if(CurrentLineStartsWithDataChunk)
                 {
-                    var header = readChunkHeader();
+                    var (Name, Parameters) = readChunkHeader();
                     var chunk = new DataChunk
                     {
-                        Name = header.Name,
-                        Parameters = header.Parameters,
+                        Name = Name,
+                        Parameters = Parameters,
                         Content = readChunkContent().ToList()
                     };
                     yield return chunk;

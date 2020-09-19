@@ -2,7 +2,7 @@
 {
     public class BuildRange
     {
-        public BuildInfo MinBuild { get; set; }
-        public BuildInfo MaxBuild { get; set; }
+        public BuildInfo? MinBuild { get; set; }
+        public BuildInfo? MaxBuild { get; set; }
     }
 }

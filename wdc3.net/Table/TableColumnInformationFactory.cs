@@ -7,7 +7,7 @@ namespace wdc3.net.Table
 {
     public class TableColumnInformationFactory
     {
-        public IEnumerable<ColumnInfo> CreateColumnInformation(Db2Definition dbd, uint hexLayoutHash)
+        public static IEnumerable<ColumnInfo> CreateColumnInformation(Db2Definition dbd, uint hexLayoutHash)
         {
             var output = new List<ColumnInfo>();
 
@@ -31,9 +31,10 @@ namespace wdc3.net.Table
                     {
                         if(definition.ArrayLength > 0)
                         {
-                            for(int i = 0; i < definition.ArrayLength; i++)
+                            for(var i = 0; i < definition.ArrayLength; i++)
                             {
-                                output.Add(new ColumnInfo() {
+                                output.Add(new ColumnInfo()
+                                {
                                     Name = $"{colDef.Name}[{i}]",
                                     Type = typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size),
                                     IsId = definition.IsId
