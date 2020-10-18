@@ -9,9 +9,6 @@ namespace wdc3.net.Table
     {
         public static IEnumerable<ColumnInfo> CreateColumnInformation(Db2Definition dbd, uint hexLayoutHash)
         {
-            var output = new List<ColumnInfo>();
-
-            var typeParser = new TableTypeParser();
             var columnDefinitions = dbd.ColumnDefinitions;
             var definitions = dbd.GetVersionDefinition(hexLayoutHash)?.Definitions;
 
@@ -22,44 +19,24 @@ namespace wdc3.net.Table
             {
                 if(colDef.Name != null && colDef.Type != null)
                 {
-                    DefinitionInfo? definition = null;
+                    var definition = definitions?.Where(def => def.Name == colDef.Name).FirstOrDefault();
 
-                    if(definitions != null)
-                        definition = definitions.Where(def => def.Name == colDef.Name).FirstOrDefault();
-
-                    if(definition != null)
-                    {
-                        if(definition.ArrayLength > 0)
-                        {
-                            for(var i = 0; i < definition.ArrayLength; i++)
-                            {
-                                output.Add(new ColumnInfo()
-                                {
-                                    Name = $"{colDef.Name}[{i}]",
-                                    Type = typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size),
-                                    IsId = definition.IsId
-                                });
-                            }
-                        }
-                        else
-                            output.Add(new ColumnInfo()
-                            {
-                                Name = colDef.Name,
-                                Type = typeParser.Parse(colDef.Type, definition.IsSigned, definition.Size),
-                                IsId = definition.IsId
-                            });
-                    }
-                    else
-                        output.Add(new ColumnInfo()
+                    yield return definition != null
+                        ? new ColumnInfo()
                         {
                             Name = colDef.Name,
-                            Type = typeParser.Parse(colDef.Type),
+                            Type = TableTypeParser.Parse(colDef.Type, definition.IsSigned, definition.Size, definition.ArrayLength > 0),
+                            IsId = definition.IsId,
+                            ArrayLength = definition.ArrayLength
+                        }
+                        : new ColumnInfo()
+                        {
+                            Name = colDef.Name,
+                            Type = TableTypeParser.Parse(colDef.Type),
                             IsId = false
-                        });
+                        };
                 }
             }
-
-            return output;
         }
     }
 }

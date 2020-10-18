@@ -2,10 +2,11 @@
 
 namespace wdc3.net.Table
 {
-    public class ColumnInfo
+    public record ColumnInfo
     {
-        public string? Name { get; set; }
-        public Type? Type { get; set; }
-        public bool IsId { get; set; }
+        public string? Name { get; init; }
+        public Type? Type { get; init; }
+        public bool IsId { get; init; }
+        public int ArrayLength { get; init; }
     }
 }

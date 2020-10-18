@@ -41,31 +41,11 @@ namespace wdc3.net
             output.Name = Db2File.Name;
             output.Locale = ((Locales)Db2.Header.Locale).ToString();
 
-
             var colInfos = TableColumnInformationFactory.CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
 
-            //Read Columns
             foreach(var colInfo in colInfos)
                 if(colInfo != null && colInfo.Name != null && colInfo.Type != null)
                     output.AddColumn(colInfo.Name, colInfo.Type);
-
-
-            //Read Rows
-            //while(!AllRowsReaded)
-            //{
-            //    List<Db2Cell> row = new List<Db2Cell>();
-            //    foreach(var colInfo in colInfos)
-            //    {
-            //        if(colInfo != null && colInfo.Name != null && colInfo.Type != null)
-            //        {
-            //            if(colInfo.IsId)
-            //                row.Add(new Db2Cell() { ColumnName = colInfo.Name, Value = _currentRowId });
-            //            else
-            //                row.Add(new Db2Cell() { ColumnName = colInfo.Name, Value = null });
-            //        }
-            //    }
-            //    output.AddRow(row);
-            //    _currentRowId++;
 
             if(Db2.Sections == null)
                 throw new Exception();
@@ -97,17 +77,7 @@ namespace wdc3.net
                 }
             }
 
-
             return output;
         }
-
-        //private Db2Cell readCell(ColumnInfo columnInfo)
-        //{
-        //    if(columnInfo == null || columnInfo.Name == null || columnInfo.Type == null)
-        //        throw new NullReferenceException();
-
-
-        //    return new Db2Cell();
-        //}
     }
 }
