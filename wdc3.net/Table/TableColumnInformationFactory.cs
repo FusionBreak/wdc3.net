@@ -12,30 +12,22 @@ namespace wdc3.net.Table
             var columnDefinitions = dbd.ColumnDefinitions;
             var definitions = dbd.GetVersionDefinition(hexLayoutHash)?.Definitions;
 
-            if(columnDefinitions == null)
+            if(definitions == null || columnDefinitions == null)
                 throw new Exception();
 
-            foreach(var colDef in columnDefinitions)
+            foreach(var definition in definitions)
             {
-                if(colDef.Name != null && colDef.Type != null)
-                {
-                    var definition = definitions?.Where(def => def.Name == colDef.Name).FirstOrDefault();
+                var columnDef = columnDefinitions.Where(colDef => colDef.Name == definition.Name).FirstOrDefault();
 
-                    yield return definition != null
-                        ? new ColumnInfo()
-                        {
-                            Name = colDef.Name,
-                            Type = TableTypeParser.Parse(colDef.Type, definition.IsSigned, definition.Size, definition.ArrayLength > 0),
-                            IsId = definition.IsId,
-                            ArrayLength = definition.ArrayLength
-                        }
-                        : new ColumnInfo()
-                        {
-                            Name = colDef.Name,
-                            Type = TableTypeParser.Parse(colDef.Type),
-                            IsId = false
-                        };
+                yield return columnDef is not null && columnDef.Type is not null
+                ? new ColumnInfo()
+                {
+                    Name = columnDef.Name,
+                    Type = TableTypeParser.Parse(columnDef.Type, definition.IsSigned, definition.Size, definition.ArrayLength > 0),
+                    IsId = definition.IsId,
+                    ArrayLength = definition.ArrayLength
                 }
+                : throw new Exception();
             }
         }
     }
