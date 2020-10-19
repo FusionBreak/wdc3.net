@@ -12,6 +12,10 @@ table, th, td {
     border: 1px solid black;
 }
 
+th {
+    padding: 5px;
+}
+
 td {
     min-width: 30px;
 }
@@ -46,9 +50,9 @@ app {
     z-index: 1000;
 }
 
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
-}
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }

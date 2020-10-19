@@ -11,6 +11,8 @@ namespace wdc3.net.Table
 
         public void AddColumn(string name, Type type) => _columns.Add(name, type);
 
+        public IEnumerable<string> ColumnNames => _columns.Keys;
+
         public void AddRow(IEnumerable<Db2Cell> cells) => _rows.Add(cells);
 
         public IEnumerable<IEnumerable<object?>> GetValues()
