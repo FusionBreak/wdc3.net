@@ -13,6 +13,8 @@ namespace wdc3.net.Table
 
         public IEnumerable<string> ColumnNames => _columns.Keys;
 
+        public int ColumnCount => _columns.Count;
+
         public void AddRow(IEnumerable<Db2Cell> cells) => _rows.Add(cells);
 
         public IEnumerable<IEnumerable<object?>> GetValues()

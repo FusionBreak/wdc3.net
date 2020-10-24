@@ -13,5 +13,13 @@ namespace wdc3.net.test
             var table = reader.Read();
             _ = table;
         }
+
+        [Fact]
+        public void ReadsCorrectNumberOfColumns()
+        {
+            var reader = new Db2ToTableReader(TestFiles.MAP_DB2_PATH, TestFiles.MAP_DBD_PATH);
+            var table = reader.Read();
+            Assert.Equal(24, table.ColumnCount);
+        }
     }
 }
