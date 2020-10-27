@@ -11,71 +11,77 @@ namespace wdc3.net
 {
     public class Db2ToTableReader
     {
-        private FileInfo Db2File { get; set; }
-        private FileInfo DbdFile { get; set; }
-        private Db2 Db2 { get; set; }
-        private Db2Definition Dbd { get; set; }
+        private FileInfo _db2File;
+        private FileInfo _dbdFile;
+        private Db2 _db2;
+        private Db2Definition _dbd;
+        IEnumerable<ColumnInfo> _columnInfos;
 
-        private uint MinRowId => Db2.Header!.MinId;
-        //private uint MaxRowId => Db2.Header!.MaxId;
-        //private bool AllRowsReaded => _currentRowId >= MaxRowId;
-
-        private uint _currentRowId;
+        //private uint MinRowId => _db2.Header!.MinId;
 
         public Db2ToTableReader(string db2Path, string dbdPath)
         {
-            Db2File = new FileInfo(db2Path);
-            DbdFile = new FileInfo(dbdPath);
-            Db2 = new Db2Reader().ReadFile(Db2File.FullName);
-            Dbd = new DbdReader().ReadFile(DbdFile.FullName);
-            _currentRowId = MinRowId;
+            _db2File = new FileInfo(db2Path);
+            _dbdFile = new FileInfo(dbdPath);
+            _db2 = new Db2Reader().ReadFile(_db2File.FullName);
+            _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
+            _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception());
         }
 
         public Db2Table Read()
         {
+            if(_db2.Header == null || _db2.Sections == null)
+                throw new Exception();
+
             var output = new Db2Table();
-
-            if(Db2.Header == null)
-                throw new Exception();
-
-            output.Name = Db2File.Name;
-            output.Locale = ((Locales)Db2.Header.Locale).ToString();
-
-            IEnumerable<ColumnInfo>? colInfos = TableColumnInformationFactory.CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
-
-            output.AddColumnRange(this.readColumns(colInfos));
-
-            if(Db2.Sections == null)
-                throw new Exception();
-
-            foreach(var section in Db2.Sections)
-            {
-                if(section.IdList == null)
-                    throw new Exception();
-
-                foreach(var id in section.IdList)
-                {
-                    _currentRowId = id;
-                    var row = new List<Db2Cell>
-                    {
-                        new Db2Cell() { ColumnName = colInfos.Where(col => col.IsId).First().Name, Value = _currentRowId }
-                    };
-
-                    foreach(var col in colInfos)
-                    {
-                        if(!col.IsId)
-                        {
-                            row.Add(col.Type == typeof(string)
-                                ? new Db2Cell() { ColumnName = col.Name, Value = "Lorem Ipsum" }
-                                : new Db2Cell() { ColumnName = col.Name, Value = null });
-                        }
-                    }
-
-                    output.AddRow(row);
-                }
-            }
+            output.Name = _db2File.Name;
+            output.Locale = ((Locales)_db2.Header.Locale).ToString();
+            output.AddColumns(this.readColumns(_columnInfos));
+            output.AddRows(readRows());
 
             return output;
+        }
+
+        private IEnumerable<IEnumerable<Db2Cell>> readRows()
+        {
+            foreach(var id in readIds())
+            {
+                var row = new List<Db2Cell>();
+                row.Add(createCellForId(id));
+
+                foreach(var col in readCells())
+                {
+                    row.Add(col);
+                }
+
+                yield return row;
+            }
+        }
+
+        private IEnumerable<Db2Cell> readCells()
+        {
+            foreach(var col in _columnInfos)
+            {
+                if(!col.IsId)
+                {
+                    yield return col.Type == typeof(string)
+                        ? new Db2Cell() { ColumnName = col.Name, Value = "Lorem Ipsum" }
+                        : new Db2Cell() { ColumnName = col.Name, Value = null };
+                }
+            }
+        }
+
+        private Db2Cell createCellForId(uint id) => new Db2Cell() { ColumnName = _columnInfos.Where(col => col.IsId).First().Name, Value = id };
+
+        private IEnumerable<uint> readIds()
+        {
+            if(_db2.Sections == null)
+                throw new Exception();
+
+            foreach(var section in _db2.Sections)
+                if(section.IdList != null)
+                    foreach(var id in section.IdList)
+                        yield return id;
         }
 
         private IEnumerable<(string name, Type type)> readColumns(IEnumerable<ColumnInfo> columnInfos)

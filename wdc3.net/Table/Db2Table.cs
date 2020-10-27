@@ -11,7 +11,7 @@ namespace wdc3.net.Table
 
         public void AddColumn(string name, Type type) => _columns.Add(name, type);
 
-        public void AddColumnRange(IEnumerable<(string name, Type type)> infos)
+        public void AddColumns(IEnumerable<(string name, Type type)> infos)
         {
             foreach(var (name, type) in infos)
                 AddColumn(name, type);
@@ -22,6 +22,12 @@ namespace wdc3.net.Table
         public int ColumnCount => _columns.Count;
 
         public void AddRow(IEnumerable<Db2Cell> cells) => _rows.Add(cells);
+
+        public void AddRows(IEnumerable<IEnumerable<Db2Cell>> rows)
+        {
+            foreach(var row in rows)
+                AddRow(row);
+        }
 
         public IEnumerable<IEnumerable<object?>> GetValues()
         {
