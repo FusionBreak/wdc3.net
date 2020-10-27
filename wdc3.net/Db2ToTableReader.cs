@@ -17,7 +17,12 @@ namespace wdc3.net
         private Db2Definition _dbd;
         IEnumerable<ColumnInfo> _columnInfos;
 
-        //private uint MinRowId => _db2.Header!.MinId;
+        private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
+        private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
+        private IEnumerable<FieldStructure> FieldStructures => _db2.FieldStructures ?? throw new ArgumentNullException(nameof(_db2.FieldStructures));
+        private IEnumerable<IFieldStorageInfo> FieldStorageInfos => _db2.FieldStorageInfos ?? throw new ArgumentNullException(nameof(_db2.FieldStorageInfos));
+        private IEnumerable<byte> PalletData => _db2.PalletData ?? throw new ArgumentNullException(nameof(_db2.PalletData));
+        private IEnumerable<byte> CommonData => _db2.CommonData ?? throw new ArgumentNullException(nameof(_db2.CommonData));
 
         public Db2ToTableReader(string db2Path, string dbdPath)
         {
@@ -30,15 +35,11 @@ namespace wdc3.net
 
         public Db2Table Read()
         {
-            if(_db2.Header == null || _db2.Sections == null)
-                throw new Exception();
-
             var output = new Db2Table();
             output.Name = _db2File.Name;
-            output.Locale = ((Locales)_db2.Header.Locale).ToString();
+            output.Locale = ((Locales)Db2Header.Locale).ToString();
             output.AddColumns(this.readColumns(_columnInfos));
             output.AddRows(readRows());
-
             return output;
         }
 
@@ -46,14 +47,8 @@ namespace wdc3.net
         {
             foreach(var id in readIds())
             {
-                var row = new List<Db2Cell>();
-                row.Add(createCellForId(id));
-
-                foreach(var col in readCells())
-                {
-                    row.Add(col);
-                }
-
+                var row = new List<Db2Cell>() { createCellForId(id) };
+                row.AddRange(readCells().Select(cell => cell));
                 yield return row;
             }
         }
@@ -75,10 +70,7 @@ namespace wdc3.net
 
         private IEnumerable<uint> readIds()
         {
-            if(_db2.Sections == null)
-                throw new Exception();
-
-            foreach(var section in _db2.Sections)
+            foreach(var section in Sections)
                 if(section.IdList != null)
                     foreach(var id in section.IdList)
                         yield return id;
