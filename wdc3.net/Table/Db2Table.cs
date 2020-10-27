@@ -11,6 +11,12 @@ namespace wdc3.net.Table
 
         public void AddColumn(string name, Type type) => _columns.Add(name, type);
 
+        public void AddColumnRange(IEnumerable<(string name, Type type)> infos)
+        {
+            foreach(var (name, type) in infos)
+                AddColumn(name, type);
+        }
+
         public IEnumerable<string> ColumnNames => _columns.Keys;
 
         public int ColumnCount => _columns.Count;

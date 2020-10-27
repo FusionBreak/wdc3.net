@@ -41,11 +41,9 @@ namespace wdc3.net
             output.Name = Db2File.Name;
             output.Locale = ((Locales)Db2.Header.Locale).ToString();
 
-            var colInfos = TableColumnInformationFactory.CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
+            IEnumerable<ColumnInfo>? colInfos = TableColumnInformationFactory.CreateColumnInformation(Dbd, Db2.Header.LayoutHash);
 
-            foreach(var colInfo in colInfos)
-                if(colInfo != null && colInfo.Name != null && colInfo.Type != null)
-                    output.AddColumn(colInfo.Name, colInfo.Type);
+            output.AddColumnRange(this.readColumns(colInfos));
 
             if(Db2.Sections == null)
                 throw new Exception();
@@ -78,6 +76,14 @@ namespace wdc3.net
             }
 
             return output;
+        }
+
+        private IEnumerable<(string name, Type type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
+        {
+            foreach(var colInfo in columnInfos)
+                    yield return colInfo != null && colInfo.Name != null && colInfo.Type != null
+                        ? (colInfo.Name, colInfo.Type)
+                        : throw new Exception();
         }
     }
 }
