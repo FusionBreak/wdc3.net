@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/wdc3.net.test/wdc3.net.test.csproj",
+                "${workspaceFolder}/wdc3.net.gui/wdc3.net.gui.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/wdc3.net.test/wdc3.net.test.csproj",
+                "${workspaceFolder}/wdc3.net.gui/wdc3.net.gui.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,7 +32,7 @@
             "args": [
                 "watch",
                 "run",
-                "${workspaceFolder}/wdc3.net.test/wdc3.net.test.csproj",
+                "${workspaceFolder}/wdc3.net.gui/wdc3.net.gui.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
