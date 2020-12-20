@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using wdc3.net.File;
 
@@ -17,12 +18,13 @@ namespace wdc3.net.Table
         private IEnumerable<byte> _recordStringData;
         private IEnumerable<byte> _recordDataCombined => _recordData.Concat(_recordStringData);
         private int _recordDataPosition = 0;
+        private int _palletDataPosition = 0;
 
         private IEnumerable<int> _palletValues
         {
             get
             {
-                for(int palletIndex = 0; palletIndex < (_palletData.Count()/ PALLET_VALUE_SIZE); palletIndex++)
+                for(int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
                 {
                     yield return BitConverter.ToInt32(_palletData.Skip(palletIndex * PALLET_VALUE_SIZE).Take(PALLET_VALUE_SIZE).ToArray());
                 }
@@ -37,17 +39,30 @@ namespace wdc3.net.Table
             _recordStringData = recordStringData ?? throw new ArgumentNullException(nameof(recordStringData));
         }
 
-        public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, Type type)
+        public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo)
         {
             _ = fieldStructure;
             switch(fieldStorageInfo.StorageType)
             {
                 case FieldCompressions.None:
-                    var size = fieldStorageInfo.FieldSizeBits / 8;
-                    var offsetByteCount = fieldStorageInfo.FieldOffsetBits / 8;
-                    var fieldOffset = _recordDataPosition;
-                    var value = readInt(_recordDataPosition, size);
-                    return type == typeof(string) ? readString(value + fieldStructure.Position) : value; //$"{value} | {fieldStructure.Position}"; //
+                    if(columnInfo.ArrayLength > 0)
+                    {
+                        var size = fieldStorageInfo.FieldSizeBits / columnInfo.ArrayLength / 8;
+                        var output = new List<object>();
+
+                        for(int i = 0; i < columnInfo.ArrayLength; i++)
+                            output.Add(readInt(_recordDataPosition, size));
+
+                        return JsonSerializer.Serialize(output);
+                    }
+                    else
+                    {
+                        var size = fieldStorageInfo.FieldSizeBits / 8;
+                        var offsetByteCount = fieldStorageInfo.FieldOffsetBits / 8;
+                        var fieldOffset = _recordDataPosition;
+                        var value = readInt(_recordDataPosition, size);
+                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position) : value; //$"{value} | {fieldStructure.Position}";
+                    }
                 // Bitpacked -- the field is a bitpacked integer in the record data.  It
                 // is field_size_bits long and starts at field_offset_bits.
                 // A bitpacked value occupies
@@ -59,14 +74,19 @@ namespace wdc3.net.Table
                 // masked with ((1ull << field_size_bits) - 1).
                 case FieldCompressions.Bitpacked:
                 case FieldCompressions.BitpackedSigned:
-                    //var a_size = (fieldStorageInfo.FieldSizeBits + (fieldStorageInfo.FieldOffsetBits & 7) + 7) / 8;
+                    float a_size = (fieldStorageInfo.FieldSizeBits + (fieldStorageInfo.FieldOffsetBits & 7) + 7) / 8;
                     //var a_offset = fieldStorageInfo.FieldOffsetBits / 8;
                     //var a_value = readByte(_recordDataPosition);
-                    return readByte(_recordDataPosition);
+                    //var index = _palletDataPosition;
+                    //var offset = index + fieldStorageInfo.
+                    //var test = _recordData.Skip(0).Take(0).ToArray();
+                    return 0;
+                //return readByte(_recordDataPosition);
                 //case FieldCompressions.CommonData:
                 //    return null;
                 case FieldCompressions.BitpackedIndexed:
-                    var index = readByte(_recordDataPosition);
+                    var index = _palletDataPosition;
+                    _palletDataPosition++;
                     return _palletValues.Skip(index).First();
                 //case FieldCompressions.BitpackedIndexedArray:
                 //    return null;

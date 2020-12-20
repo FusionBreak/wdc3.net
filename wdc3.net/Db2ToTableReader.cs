@@ -16,7 +16,7 @@ namespace wdc3.net
         private FileInfo _dbdFile;
         private Db2 _db2;
         private Db2Definition _dbd;
-        IEnumerable<ColumnInfo> _columnInfos;
+        private IEnumerable<ColumnInfo> _columnInfos;
 
         private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
         private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
@@ -27,6 +27,7 @@ namespace wdc3.net
 
         private IEnumerable<byte> PalletData => _db2.PalletData ?? throw new ArgumentNullException(nameof(_db2.PalletData));
         private IEnumerable<byte> CommonData => _db2.CommonData ?? throw new ArgumentNullException(nameof(_db2.CommonData));
+
         private IEnumerable<byte> RecordData
         {
             get
@@ -38,6 +39,7 @@ namespace wdc3.net
                                 yield return data;
             }
         }
+
         private IEnumerable<byte> RecordStringData
         {
             get
@@ -96,7 +98,7 @@ namespace wdc3.net
         {
             var (_, structure, storageInfo) = getColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
 
-            return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo.Type ?? throw new Exception());
+            return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo);
         }
 
         private IEnumerable<uint> readIds()
@@ -110,9 +112,9 @@ namespace wdc3.net
         private IEnumerable<(string name, Type type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
         {
             foreach(var colInfo in columnInfos)
-                    yield return colInfo != null && colInfo.Name != null && colInfo.Type != null
-                        ? (colInfo.Name, colInfo.Type)
-                        : throw new Exception();
+                yield return colInfo != null && colInfo.Name != null && colInfo.Type != null
+                    ? (colInfo.Name, colInfo.Type)
+                    : throw new Exception();
         }
 
         private IEnumerable<(ColumnInfo Info, FieldStructure Structure, IFieldStorageInfo StorageInfo)> getColumnReadInfos()
