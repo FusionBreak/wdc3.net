@@ -58,7 +58,7 @@ namespace wdc3.net
             _db2 = new Db2Reader().ReadFile(_db2File.FullName);
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
             _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception());
-            _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData);
+            _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits));
         }
 
         public Db2Table Read()
@@ -77,7 +77,9 @@ namespace wdc3.net
             {
                 var row = new List<Db2Cell>() { createCellForId(id) };
                 row.AddRange(readCells().Select(cell => cell));
+                Console.WriteLine(id);
                 yield return row;
+                _valueExtractor.NextRow();
             }
         }
 
@@ -97,7 +99,6 @@ namespace wdc3.net
         private object readValue(ColumnInfo columnInfo)
         {
             var (_, structure, storageInfo) = getColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
-
             return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo);
         }
 
