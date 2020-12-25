@@ -109,6 +109,7 @@ namespace wdc3.net.Table
 
         private int ReadInt(int offsetInBits, int sizeInBits)
         {
+            int maxPossibleValue = (int) Math.Pow(2, sizeInBits) - 1;
             int output = 0;
 
             for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
@@ -117,7 +118,7 @@ namespace wdc3.net.Table
                 output |= test << bitIndex;
             }
 
-            return output;
+            return output == maxPossibleValue ? -1 : output;
         }
 
         private string readString(int offset)
