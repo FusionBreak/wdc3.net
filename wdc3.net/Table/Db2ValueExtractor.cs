@@ -102,16 +102,17 @@ namespace wdc3.net.Table
 
         private int ReadInt(int offsetInBits, int sizeInBits)
         {
-            int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
+            //int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
             int output = 0;
 
             for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
             {
-                var test = _recordDataAsBits.Get(offsetInBits + bitIndex) ? 1 : 0;
-                output |= test << bitIndex;
+                var bit = _recordDataAsBits.Get(offsetInBits + bitIndex) ? 1 : 0;
+                output |= bit << bitIndex;
             }
 
-            return output == maxPossibleValue ? -1 : output;
+            return output;
+            //return output == maxPossibleValue ? -1 : output;
         }
 
         private string readString(int offset)
