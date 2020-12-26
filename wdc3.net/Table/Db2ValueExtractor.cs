@@ -25,6 +25,8 @@ namespace wdc3.net.Table
 
         private int _recordDataBitPosition = 0;
 
+        private uint _additionalDataOffset = 0;
+
         private int _currentRow = 0;
         private int _rowBitSize = 0;
         private int _currentRowBitOffset => _currentRow * _rowBitSize;
@@ -63,7 +65,9 @@ namespace wdc3.net.Table
                         var output = new List<object>();
 
                         for(int i = 0; i < columnInfo.ArrayLength; i++)
-                            output.Add(ReadInt(_recordDataBitPosition, size));
+                        {
+                            output.Add(ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
+                        }
 
                         return JsonSerializer.Serialize(output);
                     }
@@ -72,36 +76,25 @@ namespace wdc3.net.Table
                         var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
                         return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position) : value; //$"{value} | {fieldStructure.Position}";
                     }
-                // Bitpacked -- the field is a bitpacked integer in the record data.  It
-                // is field_size_bits long and starts at field_offset_bits.
-                // A bitpacked value occupies
-                //   (field_size_bits + (field_offset_bits & 7) + 7) / 8
-                // bytes starting at byte
-                //   field_offset_bits / 8
-                // in the record data.  These bytes should be read as a little-endian value,
-                // then the value is shifted to the right by (field_offset_bits & 7) and
-                // masked with ((1ull << field_size_bits) - 1).
+
                 case FieldCompressions.Bitpacked:
                 case FieldCompressions.BitpackedSigned:
-                    //float a_size = (fieldStorageInfo.FieldSizeBits + (fieldStorageInfo.FieldOffsetBits & 7) + 7) / 8;
-                    //BitArray.Cast
-                    //BitConverter.ToInt32(null,)
-                    //var tet = _recordDataAsBits.
-
-                    //var a_offset = fieldStorageInfo.FieldOffsetBits / 8;
-                    //var a_value = readByte(_recordDataPosition);
-                    //var index = _palletDataPosition;
-                    //var offset = index + fieldStorageInfo.
-                    //var test = _recordData.Skip(0).Take(0).ToArray();
                     return ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                //return readByte(_recordDataPosition);
-                //case FieldCompressions.CommonData:
-                //    return null;
+
+                // For compression types '3' and '4', you need to take the bitpacked value you obtained from the record
+                // and use it as an index into 'pallet_data'. For compression type '3', you pull a 4-byte value from 'pallet_data'
+                // using the formula 'additional_data_offset + (index * 4)', where 'additional_data_offset' is
+                // the sum of 'additional_data_size' for every column before the current one.
                 case FieldCompressions.BitpackedIndexed:
                     var index = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                    return "ERROR: " + _palletValues.Skip(index).First();
-                //case FieldCompressions.BitpackedIndexedArray:
-                //    return null;
+                    var offset = _additionalDataOffset / 4 + (index * 4);
+                    var value2 = _palletValues.Skip((int)offset).First();
+                    _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
+                    return value2;
+
+                case FieldCompressions.BitpackedIndexedArray:
+                    return null;
+
                 default:
                     return fieldStorageInfo.StorageType;
             }
@@ -109,7 +102,7 @@ namespace wdc3.net.Table
 
         private int ReadInt(int offsetInBits, int sizeInBits)
         {
-            int maxPossibleValue = (int) Math.Pow(2, sizeInBits) - 1;
+            int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
             int output = 0;
 
             for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
@@ -138,6 +131,7 @@ namespace wdc3.net.Table
         public void NextRow()
         {
             _currentRow++;
+            _additionalDataOffset = 0;
         }
     }
 }
