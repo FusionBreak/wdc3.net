@@ -87,13 +87,24 @@ namespace wdc3.net.Table
                 // the sum of 'additional_data_size' for every column before the current one.
                 case FieldCompressions.BitpackedIndexed:
                     var index = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                    var offset = _additionalDataOffset / 4 + (index * 4);
+                    var offset = _additionalDataOffset / 4 + (index);
                     var value2 = _palletValues.Skip((int)offset).First();
                     _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
                     return value2;
 
                 case FieldCompressions.BitpackedIndexedArray:
-                    return null;
+                    var index_array = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
+                    var offset_array = _additionalDataOffset / 4 + (index_array);
+
+                    var output2 = new List<object>();
+                    for(int i = 0; i < columnInfo.ArrayLength; i++)
+                    {
+                        output2.Add(_palletValues.Skip((int)offset_array + i).First());
+                    }
+
+                    _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
+
+                    return JsonSerializer.Serialize(output2);
 
                 default:
                     return fieldStorageInfo.StorageType;
