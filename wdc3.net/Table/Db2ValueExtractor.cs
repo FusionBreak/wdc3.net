@@ -75,7 +75,7 @@ namespace wdc3.net.Table
                     else
                     {
                         var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position) : value; //$"{value} | {fieldStructure.Position}";
+                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position + (48 * _currentRow)) : value; //where does the 48 come from? Maybe header.record_size
                     }
 
                 case FieldCompressions.Bitpacked:
