@@ -30,6 +30,7 @@ namespace wdc3.net.Table
         private int _currentRow = 0;
         private int _rowBitSize = 0;
         private int _currentRowBitOffset => _currentRow * _rowBitSize;
+        //private int _rowStringBitSize = 0;
 
         private IEnumerable<int> _palletValues
         {
@@ -49,7 +50,7 @@ namespace wdc3.net.Table
             _recordData = recordData ?? throw new ArgumentNullException(nameof(recordData));
             _recordStringData = recordStringData ?? throw new ArgumentNullException(nameof(recordStringData));
 
-            _rowBitSize = rowBitSize;
+            _rowBitSize = FillBitSizeToByte(rowBitSize);
             _recordDataAsBits = new BitArray(recordData.ToArray());
         }
 
@@ -138,6 +139,16 @@ namespace wdc3.net.Table
                         .ToArray();
 
             return new string(chars);
+        }
+
+        private int FillBitSizeToByte(int offset)
+        {
+            while(offset % 8 != 0)
+            {
+                offset++;
+            }
+
+            return offset;
         }
 
         public void NextRow()
