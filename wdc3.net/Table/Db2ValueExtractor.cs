@@ -13,6 +13,7 @@ namespace wdc3.net.Table
     {
         private const int PALLET_VALUE_SIZE = sizeof(int);
 
+        private int _recordSize = 0;
         private IEnumerable<byte> _palletData;
         private IEnumerable<byte> _commonData;
         private IEnumerable<byte> _recordData;
@@ -43,7 +44,7 @@ namespace wdc3.net.Table
             }
         }
 
-        public Db2ValueExtractor(IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<byte> recordData, IEnumerable<byte> recordStringData, int rowBitSize)
+        public Db2ValueExtractor(IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<byte> recordData, IEnumerable<byte> recordStringData, int rowBitSize, int recordSize)
         {
             _palletData = palletData ?? throw new ArgumentNullException(nameof(palletData));
             _commonData = commonData ?? throw new ArgumentNullException(nameof(commonData));
@@ -52,6 +53,7 @@ namespace wdc3.net.Table
 
             _rowBitSize = FillBitSizeToByte(rowBitSize);
             _recordDataAsBits = new BitArray(recordData.ToArray());
+            _recordSize = recordSize;
         }
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo)
@@ -75,7 +77,7 @@ namespace wdc3.net.Table
                     else
                     {
                         var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position + (48 * _currentRow)) : value; //where does the 48 come from? Maybe header.record_size
+                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position + (_recordSize * _currentRow)) : value;
                     }
 
                 case FieldCompressions.Bitpacked:

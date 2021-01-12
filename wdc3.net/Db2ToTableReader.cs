@@ -58,7 +58,7 @@ namespace wdc3.net
             _db2 = new Db2Reader().ReadFile(_db2File.FullName);
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
             _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception());
-            _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits));
+            _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize);
         }
 
         public Db2Table Read()
