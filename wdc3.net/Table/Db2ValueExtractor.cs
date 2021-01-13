@@ -14,11 +14,11 @@ namespace wdc3.net.Table
         private const int PALLET_VALUE_SIZE = sizeof(int);
 
         private int _recordSize = 0;
-        private IEnumerable<byte> _palletData;
-        private IEnumerable<byte> _commonData;
-        private IEnumerable<byte> _recordData;
-        private IEnumerable<byte> _recordStringData;
-        private IEnumerable<byte> _recordDataCombined => _recordData.Concat(_recordStringData);
+        private byte[] _palletData;
+        private byte[] _commonData;
+        private byte[] _recordData;
+        private byte[] _recordStringData;
+        private byte[] _recordDataCombined;
         private BitArray _recordDataAsBits;
 
         //private int _recordDataPosition = 0;
@@ -46,10 +46,11 @@ namespace wdc3.net.Table
 
         public Db2ValueExtractor(IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<byte> recordData, IEnumerable<byte> recordStringData, int rowBitSize, int recordSize)
         {
-            _palletData = palletData ?? throw new ArgumentNullException(nameof(palletData));
-            _commonData = commonData ?? throw new ArgumentNullException(nameof(commonData));
-            _recordData = recordData ?? throw new ArgumentNullException(nameof(recordData));
-            _recordStringData = recordStringData ?? throw new ArgumentNullException(nameof(recordStringData));
+            _palletData = palletData.ToArray() ?? throw new ArgumentNullException(nameof(palletData));
+            _commonData = commonData.ToArray() ?? throw new ArgumentNullException(nameof(commonData));
+            _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
+            _recordStringData = recordStringData.ToArray() ?? throw new ArgumentNullException(nameof(recordStringData));
+            _recordDataCombined = _recordData.Concat(_recordStringData).ToArray();
 
             _rowBitSize = FillBitSizeToByte(rowBitSize);
             _recordDataAsBits = new BitArray(recordData.ToArray());
