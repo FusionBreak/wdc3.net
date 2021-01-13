@@ -16,7 +16,7 @@ namespace wdc3.net
         private FileInfo _dbdFile;
         private Db2 _db2;
         private Db2Definition _dbd;
-        private IEnumerable<ColumnInfo> _columnInfos;
+        private ColumnInfo[] _columnInfos;
 
         private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
         private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
@@ -60,7 +60,7 @@ namespace wdc3.net
             _dbdFile = new FileInfo(dbdPath);
             _db2 = new Db2Reader().ReadFile(_db2File.FullName);
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
-            _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception());
+            _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception()).ToArray();
             _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize);
         }
 
@@ -80,7 +80,6 @@ namespace wdc3.net
             {
                 var row = new List<Db2Cell>() { createCellForId(id) };
                 row.AddRange(readCells().Select(cell => cell));
-                Console.WriteLine(id);
                 yield return row;
                 _valueExtractor.NextRow();
             }
