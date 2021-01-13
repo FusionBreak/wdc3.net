@@ -37,6 +37,9 @@ namespace wdc3.net
                         foreach(var record in defaultSection.Records ?? throw new Exception())
                             foreach(byte data in record.Data ?? throw new Exception())
                                 yield return data;
+                    else if(section is SectionWithFlag flagSection)
+                        foreach(var data in flagSection.VariableRecordData ?? throw new Exception())
+                            yield return data;
             }
         }
 

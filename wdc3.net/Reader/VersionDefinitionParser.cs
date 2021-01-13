@@ -25,6 +25,8 @@ namespace wdc3.net.Reader
                     buildRanges.Add(parseBuildRange(row));
                 else if(row.StartsWith(DataChunkNames.BUILD))
                     builds.AddRange(parseBuilds(row));
+                else if(row.StartsWith("COMMENT"))
+                    _ = row;
                 else
                     definitions.Add(parseDefinitionInfo(row));
             }

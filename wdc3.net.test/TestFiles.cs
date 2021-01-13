@@ -13,7 +13,7 @@ namespace wdc3.net.test
         public const string MAP_9_DB2_PATH = "./../../../TestFiles/map_9_0_2.db2";
         public const string ITEM_DB2_PATH = "./../../../TestFiles/item.db2";
         public const string ITEM_DBD_PATH = "./../../../TestFiles/Item.dbd";
-        public const string ITEM_SPARSE_DB2_PATH = "./../../../TestFiles/item-sparse.db2";
+        public const string ITEM_SPARSE_DB2_PATH = "./../../../TestFiles/itemsparse.db2";
         public const string ITEM_SPARSE_DBD_PATH = "./../../../TestFiles/ItemSparse.dbd";
         public const string LOCALE_DB2_PATH = "./../../../TestFiles/locale.db2";
         public const string LOCALE_DBD_PATH = "./../../../TestFiles/Locale.dbd";

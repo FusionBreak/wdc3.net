@@ -17,6 +17,8 @@ namespace wdc3.net.Table
 
         public static Type Parse(string typeName, bool isSigned, int size, bool isArray = false) => (typeName, isSigned, size, isArray) switch
         {
+            ("int", true, 64, false) => typeof(long),
+            ("int", false, 64, false) => typeof(ulong),
             ("int", true, 32, false) => typeof(int),
             ("int", false, 32, false) => typeof(uint),
             ("int", true, 16, false) => typeof(short),
@@ -30,6 +32,8 @@ namespace wdc3.net.Table
             ("float", false, 16, false) => typeof(decimal),
             ("string", false, 0, false) => typeof(string),
             ("locstring", false, 0, false) => typeof(string),
+            ("int", true, 64, true) => typeof(IEnumerable<long>),
+            ("int", false, 64, true) => typeof(IEnumerable<ulong>),
             ("int", true, 32, true) => typeof(IEnumerable<int>),
             ("int", false, 32, true) => typeof(IEnumerable<uint>),
             ("int", true, 16, true) => typeof(IEnumerable<short>),
