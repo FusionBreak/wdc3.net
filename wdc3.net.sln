@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdc3.net.test", "wdc3.net.test\wdc3.net.test.csproj", "{1DA455AD-8E42-4079-A9F9-5985E21237D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "wdc3.net.gui", "wdc3.net.gui\wdc3.net.gui.csproj", "{66D11381-3A4B-4820-8CA5-699D2D5723FE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wdc3.net.native", "wdc3.net.native\wdc3.net.native.csproj", "{7985A966-416D-4834-B6FC-99F48CF1C34F}"
 EndProject
 Global
@@ -30,10 +28,6 @@ Global
 		{1DA455AD-8E42-4079-A9F9-5985E21237D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DA455AD-8E42-4079-A9F9-5985E21237D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DA455AD-8E42-4079-A9F9-5985E21237D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66D11381-3A4B-4820-8CA5-699D2D5723FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7985A966-416D-4834-B6FC-99F48CF1C34F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7985A966-416D-4834-B6FC-99F48CF1C34F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7985A966-416D-4834-B6FC-99F48CF1C34F}.Release|Any CPU.ActiveCfg = Release|Any CPU
