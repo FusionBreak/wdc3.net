@@ -10,8 +10,8 @@ namespace wdc3.net.Table
         {
             "int" => Db2ValueTypes.Number,
             "float" => Db2ValueTypes.Number,
-            "string" => Db2ValueTypes.Number,
-            "locstring" => Db2ValueTypes.Number,
+            "string" => Db2ValueTypes.Text,
+            "locstring" => Db2ValueTypes.Text,
             _ => throw new NotImplementedException(),
         };
     }
