@@ -23,9 +23,11 @@ namespace wdc3.net.Table
                 ? new ColumnInfo()
                 {
                     Name = columnDef.Name,
-                    Type = TableTypeParser.Parse(columnDef.Type, definition.IsSigned, definition.Size, definition.ArrayLength > 0),
+                    Type = TableTypeParser.Parse(columnDef.Type),
                     IsId = definition.IsId,
-                    ArrayLength = definition.ArrayLength
+                    ArrayLength = definition.ArrayLength,
+                    Size = definition.Size,
+                    IsSigned = definition.IsSigned
                 }
                 : throw new Exception();
             }

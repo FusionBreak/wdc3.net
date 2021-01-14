@@ -112,10 +112,10 @@ namespace wdc3.net
                         yield return id;
         }
 
-        private IEnumerable<(string name, Type type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
+        private IEnumerable<(string name, Db2ValueTypes type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
         {
             foreach(var colInfo in columnInfos)
-                yield return colInfo != null && colInfo.Name != null && colInfo.Type != null
+                yield return colInfo != null && colInfo.Name != null
                     ? (colInfo.Name, colInfo.Type)
                     : throw new Exception();
         }

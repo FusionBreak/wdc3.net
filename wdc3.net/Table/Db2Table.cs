@@ -9,9 +9,9 @@ namespace wdc3.net.Table
         public string? Name { get; set; }
         public string? Locale { get; set; }
 
-        public void AddColumn(string name, Type type) => _columns.Add(name, type);
+        public void AddColumn(string name, Db2ValueTypes type) => _columns.Add(name, type);
 
-        public void AddColumns(IEnumerable<(string name, Type type)> infos)
+        public void AddColumns(IEnumerable<(string name, Db2ValueTypes type)> infos)
         {
             foreach(var (name, type) in infos)
                 AddColumn(name, type);
@@ -45,7 +45,7 @@ namespace wdc3.net.Table
             }
         }
 
-        private readonly List<IEnumerable<Db2Cell>> _rows = new List<IEnumerable<Db2Cell>>();
-        private readonly Dictionary<string, Type> _columns = new Dictionary<string, Type>();
+        private readonly List<IEnumerable<Db2Cell>> _rows = new();
+        private readonly Dictionary<string, Db2ValueTypes> _columns = new();
     }
 }

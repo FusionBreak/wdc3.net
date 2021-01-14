@@ -78,7 +78,7 @@ namespace wdc3.net.Table
                     else
                     {
                         var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                        return columnInfo.Type == typeof(string) ? readString(value + fieldStructure.Position + (_recordSize * _currentRow)) : value;
+                        return columnInfo.Type == Db2ValueTypes.Text ? readString(value + fieldStructure.Position + (_recordSize * _currentRow)) : value;
                     }
 
                 case FieldCompressions.Bitpacked:
