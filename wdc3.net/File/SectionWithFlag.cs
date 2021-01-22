@@ -7,8 +7,8 @@ namespace wdc3.net.File
         public IEnumerable<byte>? VariableRecordData { get; set; }
 
         public IEnumerable<uint>? IdList { get; set; }
-        public CopyTableEntry? CopyTable { get; set; }
-        public OffsetMapEntry? OffsetMap { get; set; }
+        public IEnumerable<CopyTableEntry>? CopyTable { get; set; }
+        public IEnumerable<OffsetMapEntry>? OffsetMap { get; set; }
         public RelationshipMapping? RelationshipMap { get; set; }
         public IEnumerable<uint>? OffsetMapIdList { get; set; }
     }

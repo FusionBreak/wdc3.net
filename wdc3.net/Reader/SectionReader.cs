@@ -37,22 +37,30 @@ namespace wdc3.net.Reader
 
                 if(sectionHeader.CopyTableCount > 0)
                 {
-                    var copyTable = new CopyTableEntry
+                    var copyTableEntrys = new List<CopyTableEntry>();
+                    for(int copyTableIndex = 0; copyTableIndex < sectionHeader.CopyTableCount; copyTableIndex++)
                     {
-                        IdOfNewRow = _reader.ReadUInt32(),
-                        IdOfCopiedRow = _reader.ReadUInt32()
-                    };
-                    section.CopyTable = copyTable;
+                        copyTableEntrys.Add(new CopyTableEntry
+                        {
+                            IdOfNewRow = _reader.ReadUInt32(),
+                            IdOfCopiedRow = _reader.ReadUInt32()
+                        });
+                    }
+                    section.CopyTable = copyTableEntrys;
                 }
 
                 if(sectionHeader.OffsetMapIdCount > 0)
                 {
-                    var offsetMap = new OffsetMapEntry
+                    var offsetMapEntrys = new List<OffsetMapEntry>();
+                    for(int offsetMapIndex = 0; offsetMapIndex < sectionHeader.OffsetMapIdCount; offsetMapIndex++)
                     {
-                        Offset = _reader.ReadUInt32(),
-                        Size = _reader.ReadUInt16()
-                    };
-                    section.OffsetMap = offsetMap;
+                        offsetMapEntrys.Add(new OffsetMapEntry
+                        {
+                            Offset = _reader.ReadUInt32(),
+                            Size = _reader.ReadUInt16()
+                        });
+                    }
+                    section.OffsetMap = offsetMapEntrys;
                 }
 
                 if(sectionHeader.RelationsshipDataSize > 0)
