@@ -15,8 +15,8 @@ namespace wdc3.net.test.Table
                 Locale = "xx-XX"
             };
 
-            table.AddColumn("First", typeof(string));
-            table.AddColumn("Second", typeof(int));
+            table.AddColumn("First", Db2ValueTypes.Text);
+            table.AddColumn("Second", Db2ValueTypes.Number);
 
             table.AddRow(new List<Db2Cell>() {
                 new Db2Cell()
