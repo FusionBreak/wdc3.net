@@ -5,11 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using wdc3.net.Enums;
 using wdc3.net.File;
 
 namespace wdc3.net.Table
 {
-    public class Db2ValueExtractor
+    public class Db2ValueExtractorNoOffsetFlag : IDb2ValueExtractor
     {
         private const int PALLET_VALUE_SIZE = sizeof(int);
 
@@ -21,30 +22,24 @@ namespace wdc3.net.Table
         private byte[] _recordDataCombined;
         private BitArray _recordDataAsBits;
 
-        //private int _recordDataPosition = 0;
-        private int _palletDataPosition = 0;
-
-        private int _recordDataBitPosition = 0;
-
         private uint _additionalDataOffset = 0;
 
         private int _currentRow = 0;
         private int _rowBitSize = 0;
         private int _currentRowBitOffset => _currentRow * _rowBitSize;
-        //private int _rowStringBitSize = 0;
 
         private IEnumerable<int> _palletValues
         {
             get
             {
-                for(int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
+                for (int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
                 {
                     yield return BitConverter.ToInt32(_palletData.Skip(palletIndex * PALLET_VALUE_SIZE).Take(PALLET_VALUE_SIZE).ToArray());
                 }
             }
         }
 
-        public Db2ValueExtractor(IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<byte> recordData, IEnumerable<byte> recordStringData, int rowBitSize, int recordSize)
+        public Db2ValueExtractorNoOffsetFlag(IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<byte> recordData, IEnumerable<byte> recordStringData, int rowBitSize, int recordSize)
         {
             _palletData = palletData.ToArray() ?? throw new ArgumentNullException(nameof(palletData));
             _commonData = commonData.ToArray() ?? throw new ArgumentNullException(nameof(commonData));
@@ -57,18 +52,18 @@ namespace wdc3.net.Table
             _recordSize = recordSize;
         }
 
-        public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo)
+        public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
             _ = fieldStructure;
-            switch(fieldStorageInfo.StorageType)
+            switch (fieldStorageInfo.StorageType)
             {
                 case FieldCompressions.None:
-                    if(columnInfo.ArrayLength > 0)
+                    if (columnInfo.ArrayLength > 0)
                     {
                         var size = fieldStorageInfo.FieldSizeBits / columnInfo.ArrayLength;
                         var output = new List<object>();
 
-                        for(int i = 0; i < columnInfo.ArrayLength; i++)
+                        for (int i = 0; i < columnInfo.ArrayLength; i++)
                         {
                             output.Add(ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
                         }
@@ -78,17 +73,23 @@ namespace wdc3.net.Table
                     else
                     {
                         var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
-                        return columnInfo.Type == Db2ValueTypes.Text ? readString(value + fieldStructure.Position + (_recordSize * _currentRow)) : value;
+
+                        if (columnInfo.Type == Db2ValueTypes.Text)
+                        {
+                            var stringOffset = value + fieldStructure.Position + (_recordSize * _currentRow);
+
+                            return readString(stringOffset);
+                        }
+                        else
+                        {
+                            return value;
+                        }
                     }
 
                 case FieldCompressions.Bitpacked:
                 case FieldCompressions.BitpackedSigned:
                     return ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
 
-                // For compression types '3' and '4', you need to take the bitpacked value you obtained from the record
-                // and use it as an index into 'pallet_data'. For compression type '3', you pull a 4-byte value from 'pallet_data'
-                // using the formula 'additional_data_offset + (index * 4)', where 'additional_data_offset' is
-                // the sum of 'additional_data_size' for every column before the current one.
                 case FieldCompressions.BitpackedIndexed:
                     var index = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
                     var offset = _additionalDataOffset / 4 + (index);
@@ -101,7 +102,7 @@ namespace wdc3.net.Table
                     var offset_array = _additionalDataOffset / 4 + (index_array);
 
                     var output2 = new List<object>();
-                    for(int i = 0; i < columnInfo.ArrayLength; i++)
+                    for (int i = 0; i < columnInfo.ArrayLength; i++)
                     {
                         output2.Add(_palletValues.Skip((int)offset_array + i).First());
                     }
@@ -120,7 +121,7 @@ namespace wdc3.net.Table
             //int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
             int output = 0;
 
-            for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
+            for (int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
             {
                 var bit = _recordDataAsBits.Get(offsetInBits + bitIndex) ? 1 : 0;
                 output |= bit << bitIndex;
@@ -132,7 +133,7 @@ namespace wdc3.net.Table
 
         private string readString(int offset)
         {
-            if(offset - _recordData.Count() < 0)
+            if (offset - _recordData.Count() < 0)
                 return $"ERROR:{offset - _recordData.Count()} ";
 
             var chars = _recordDataCombined
@@ -146,7 +147,7 @@ namespace wdc3.net.Table
 
         private int FillBitSizeToByte(int offset)
         {
-            while(offset % 8 != 0)
+            while (offset % 8 != 0)
             {
                 offset++;
             }

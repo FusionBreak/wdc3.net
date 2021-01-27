@@ -1,4 +1,5 @@
 ﻿using System;
+using wdc3.net.Enums;
 
 namespace wdc3.net.Table
 {

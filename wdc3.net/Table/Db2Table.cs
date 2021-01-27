@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using wdc3.net.Enums;
 
 namespace wdc3.net.Table
 {
@@ -13,7 +14,7 @@ namespace wdc3.net.Table
 
         public void AddColumns(IEnumerable<(string name, Db2ValueTypes type)> infos)
         {
-            foreach(var (name, type) in infos)
+            foreach (var (name, type) in infos)
                 AddColumn(name, type);
         }
 
@@ -25,13 +26,13 @@ namespace wdc3.net.Table
 
         public void AddRows(IEnumerable<IEnumerable<Db2Cell>> rows)
         {
-            foreach(var row in rows)
+            foreach (var row in rows)
                 AddRow(row);
         }
 
         public IEnumerable<IEnumerable<object?>> GetValues()
         {
-            foreach(var row in _rows)
+            foreach (var row in _rows)
             {
                 yield return getRowValues(row);
             }
@@ -39,7 +40,7 @@ namespace wdc3.net.Table
 
         private IEnumerable<object?> getRowValues(IEnumerable<Db2Cell> row)
         {
-            foreach(var column in _columns)
+            foreach (var column in _columns)
             {
                 yield return row.First(cell => cell.ColumnName == column.Key).Value; //Convert.ChangeType(row.First(cell => cell.ColumnName == column.Key).Value, column.Value);
             }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using wdc3.net.Enums;
 using wdc3.net.Table;
 using Xunit;
 
@@ -16,7 +17,7 @@ namespace wdc3.net.test.Table
             };
 
             table.AddColumn("First", Db2ValueTypes.Text);
-            table.AddColumn("Second", Db2ValueTypes.Number);
+            table.AddColumn("Second", Db2ValueTypes.Integer);
 
             table.AddRow(new List<Db2Cell>() {
                 new Db2Cell()
@@ -44,9 +45,9 @@ namespace wdc3.net.test.Table
                 },
             });
 
-            foreach(var a in table.GetValues())
+            foreach (var a in table.GetValues())
             {
-                foreach(var b in a)
+                foreach (var b in a)
                 {
                     var value = b;
                     var type = b.GetType();

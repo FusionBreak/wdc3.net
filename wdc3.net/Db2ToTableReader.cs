@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -17,13 +18,14 @@ namespace wdc3.net
         private Db2 _db2;
         private Db2Definition _dbd;
         private ColumnInfo[] _columnInfos;
+        private RowInfo[] _rowInfos;
 
         private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
         private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
         private IEnumerable<FieldStructure> FieldStructures => _db2.FieldStructures ?? throw new ArgumentNullException(nameof(_db2.FieldStructures));
         private IEnumerable<IFieldStorageInfo> FieldStorageInfos => _db2.FieldStorageInfos ?? throw new ArgumentNullException(nameof(_db2.FieldStorageInfos));
 
-        private Db2ValueExtractor _valueExtractor;
+        private IDb2ValueExtractor _valueExtractor;
 
         private IEnumerable<byte> PalletData => _db2.PalletData ?? throw new ArgumentNullException(nameof(_db2.PalletData));
         private IEnumerable<byte> CommonData => _db2.CommonData ?? throw new ArgumentNullException(nameof(_db2.CommonData));
@@ -32,13 +34,13 @@ namespace wdc3.net
         {
             get
             {
-                foreach(var section in Sections)
-                    if(section is Section defaultSection)
-                        foreach(var record in defaultSection.Records ?? throw new Exception())
-                            foreach(byte data in record.Data ?? throw new Exception())
+                foreach (var section in Sections)
+                    if (section is Section defaultSection)
+                        foreach (var record in defaultSection.Records ?? throw new Exception())
+                            foreach (byte data in record.Data ?? throw new Exception())
                                 yield return data;
-                    else if(section is SectionWithFlag flagSection)
-                        foreach(var data in flagSection.VariableRecordData ?? throw new Exception())
+                    else if (section is SectionWithFlag flagSection)
+                        foreach (var data in flagSection.VariableRecordData ?? throw new Exception())
                             yield return data;
             }
         }
@@ -47,9 +49,9 @@ namespace wdc3.net
         {
             get
             {
-                foreach(var section in Sections)
-                    if(section is Section defaultSection)
-                        foreach(byte data in defaultSection.StringData ?? throw new Exception())
+                foreach (var section in Sections)
+                    if (section is Section defaultSection)
+                        foreach (byte data in defaultSection.StringData ?? throw new Exception())
                             yield return data;
             }
         }
@@ -61,7 +63,10 @@ namespace wdc3.net
             _db2 = new Db2Reader().ReadFile(_db2File.FullName);
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
             _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception()).ToArray();
-            _valueExtractor = new Db2ValueExtractor(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize);
+            _rowInfos = ReadRowInfos().ToArray();
+            _valueExtractor = (_db2.Header.Flags & 1) == 0
+                ? new Db2ValueExtractorNoOffsetFlag(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize)
+                : new Db2ValueExtractorWithOffsetFlag(RecordData, (int)(_db2?.SectionHeaders?.First().FileOffset ?? throw new Exception($"{nameof(SectionHeader.FileOffset)} was null")));
         }
 
         public Db2Table Read()
@@ -76,45 +81,45 @@ namespace wdc3.net
 
         private IEnumerable<IEnumerable<Db2Cell>> readRows()
         {
-            foreach(var id in readIds())
+            foreach (var rowInfo in _rowInfos)
             {
-                var row = new List<Db2Cell>() { createCellForId(id) };
-                row.AddRange(readCells().Select(cell => cell));
+                var row = new List<Db2Cell>() { createCellForId(rowInfo.Id) };
+                row.AddRange(readCells(rowInfo).Select(cell => cell));
                 yield return row;
                 _valueExtractor.NextRow();
             }
         }
 
-        private IEnumerable<Db2Cell> readCells()
+        private IEnumerable<Db2Cell> readCells(RowInfo rowInfo)
         {
-            foreach(var col in _columnInfos)
+            foreach (var columnInfo in _columnInfos)
             {
-                if(!col.IsId && col.Type != null)
+                if (!columnInfo.IsId)
                 {
-                    yield return new Db2Cell() { ColumnName = col.Name, Value = readValue(col) };
+                    yield return new Db2Cell() { ColumnName = columnInfo.Name, Value = readValue(rowInfo, columnInfo) };
                 }
             }
         }
 
         private Db2Cell createCellForId(uint id) => new Db2Cell() { ColumnName = _columnInfos.Where(col => col.IsId).First().Name, Value = id };
 
-        private object readValue(ColumnInfo columnInfo)
+        private object readValue(RowInfo rowInfo, ColumnInfo columnInfo)
         {
             var (_, structure, storageInfo) = getColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
-            return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo);
+            return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo, rowInfo);
         }
 
-        private IEnumerable<uint> readIds()
+        private IEnumerable<uint> ReadOffsetMapIds()
         {
-            foreach(var section in Sections)
-                if(section.IdList != null)
-                    foreach(var id in section.IdList)
-                        yield return id;
+            foreach (var section in Sections)
+                if (section is SectionWithFlag flagSection && flagSection.OffsetMapIdList is not null)
+                    foreach (var offsetMapId in flagSection.OffsetMapIdList)
+                        yield return offsetMapId;
         }
 
         private IEnumerable<(string name, Db2ValueTypes type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
         {
-            foreach(var colInfo in columnInfos)
+            foreach (var colInfo in columnInfos)
                 yield return colInfo != null && colInfo.Name != null
                     ? (colInfo.Name, colInfo.Type)
                     : throw new Exception();
@@ -126,8 +131,29 @@ namespace wdc3.net
             var fieldStorageInfos = FieldStorageInfos.ToArray();
             var columnInfos = _columnInfos.Where(column => !column.IsId).ToArray();
 
-            for(int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
+            for (int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
                 yield return (columnInfos[columnIndex], fieldStructures[columnIndex], fieldStorageInfos[columnIndex]);
+        }
+
+        private IEnumerable<RowInfo> ReadRowInfos()
+        {
+            foreach (var section in Sections)
+            {
+                for (int index = 0; index < section.IdList?.Count(); index++)
+                {
+                    var id = section.IdList.Skip(index).First();
+                    var offsetMap = section.OffsetMap?.Skip(index).First();
+                    var offsetMapId = section.OffsetMapIdList?.Skip(index).First();
+
+                    yield return new RowInfo()
+                    {
+                        Id = id,
+                        Offset = offsetMap?.Offset,
+                        Size = offsetMap?.Size,
+                        OffsetMapId = offsetMapId
+                    };
+                }
+            }
         }
     }
 }
