@@ -15,6 +15,8 @@ namespace wdc3.net.Table
         private byte[] _recordData;
         private int _recordDataOffset;
 
+        private int _forcedStringOffset = 0;
+
         public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, int recordDataOffset)
         {
             _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
@@ -25,9 +27,19 @@ namespace wdc3.net.Table
         {
             var valueOffset = (int)(((rowInfo?.Offset ?? throw new Exception()) - _recordDataOffset) + fieldStorageInfo.FieldOffsetBits);
 
-            return columnInfo.ArrayLength > 0
+            if (columnInfo.Type == Db2ValueTypes.Text && _forcedStringOffset != 0)
+                valueOffset = _forcedStringOffset;
+
+            var output = columnInfo.ArrayLength > 0
                 ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
+
+            if (output is string text)
+                _forcedStringOffset = valueOffset + ((text.Length + sizeof(byte)) * 8);
+            else
+                _forcedStringOffset = 0;
+
+            return output;
         }
 
         public void NextRow()
@@ -62,7 +74,7 @@ namespace wdc3.net.Table
             (Db2ValueTypes.Float, 16, _) => throw new NotImplementedException(),
             (Db2ValueTypes.Float, 32, _) => ReadFloat(valueOffset / 8),
             (Db2ValueTypes.Float, 64, _) => ReadDouble(valueOffset / 8),
-            (Db2ValueTypes.Text, _, _) => "???",
+            (Db2ValueTypes.Text, _, _) => ReadString(valueOffset / 8),
             _ => throw new NotImplementedException(),
         };
 
@@ -83,5 +95,11 @@ namespace wdc3.net.Table
         private uint ReadUInteger(int offset) => BitConverter.ToUInt32(_recordData, offset);
 
         private long ReadULong(int offset) => BitConverter.ToInt64(_recordData, offset);
+
+        private string ReadString(int offset) => new string(_recordData
+                                                    .Skip(offset)
+                                                    .TakeWhile(x => x != 0)
+                                                    .Select(x => Convert.ToChar(x))
+                                                    .ToArray());
     }
 }
