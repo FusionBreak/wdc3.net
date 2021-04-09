@@ -26,13 +26,13 @@ namespace wdc3.net.Table
 
         private int _currentRow = 0;
         private int _rowBitSize = 0;
-        private int _currentRowBitOffset => _currentRow * _rowBitSize;
+        private int CurrentRowBitOffset => _currentRow * _rowBitSize;
 
-        private IEnumerable<int> _palletValues
+        private IEnumerable<int> PalletValues
         {
             get
             {
-                for (int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
+                for(int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
                 {
                     yield return BitConverter.ToInt32(_palletData.Skip(palletIndex * PALLET_VALUE_SIZE).Take(PALLET_VALUE_SIZE).ToArray());
                 }
@@ -55,30 +55,30 @@ namespace wdc3.net.Table
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
             _ = fieldStructure;
-            switch (fieldStorageInfo.StorageType)
+            switch(fieldStorageInfo.StorageType)
             {
                 case FieldCompressions.None:
-                    if (columnInfo.ArrayLength > 0)
+                    if(columnInfo.ArrayLength > 0)
                     {
                         var size = fieldStorageInfo.FieldSizeBits / columnInfo.ArrayLength;
                         var output = new List<object>();
 
-                        for (int i = 0; i < columnInfo.ArrayLength; i++)
+                        for(int i = 0; i < columnInfo.ArrayLength; i++)
                         {
-                            output.Add(ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
+                            output.Add(ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
                         }
 
                         return JsonSerializer.Serialize(output);
                     }
                     else
                     {
-                        var value = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
+                        var value = ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
 
-                        if (columnInfo.Type == Db2ValueTypes.Text)
+                        if(columnInfo.Type == Db2ValueTypes.Text)
                         {
                             var stringOffset = value + fieldStructure.Position + (_recordSize * _currentRow);
 
-                            return readString(stringOffset);
+                            return ReadString(stringOffset);
                         }
                         else
                         {
@@ -88,23 +88,23 @@ namespace wdc3.net.Table
 
                 case FieldCompressions.Bitpacked:
                 case FieldCompressions.BitpackedSigned:
-                    return ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
+                    return ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
 
                 case FieldCompressions.BitpackedIndexed:
-                    var index = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
+                    var index = ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
                     var offset = _additionalDataOffset / 4 + (index);
-                    var value2 = _palletValues.Skip((int)offset).First();
+                    var value2 = PalletValues.Skip((int)offset).First();
                     _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
                     return value2;
 
                 case FieldCompressions.BitpackedIndexedArray:
-                    var index_array = ReadInt(_currentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
+                    var index_array = ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits, fieldStorageInfo.FieldSizeBits);
                     var offset_array = _additionalDataOffset / 4 + (index_array);
 
                     var output2 = new List<object>();
-                    for (int i = 0; i < columnInfo.ArrayLength; i++)
+                    for(int i = 0; i < columnInfo.ArrayLength; i++)
                     {
-                        output2.Add(_palletValues.Skip((int)offset_array + i).First());
+                        output2.Add(PalletValues.Skip((int)offset_array + i).First());
                     }
 
                     _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
@@ -121,7 +121,7 @@ namespace wdc3.net.Table
             //int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
             int output = 0;
 
-            for (int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
+            for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
             {
                 var bit = _recordDataAsBits.Get(offsetInBits + bitIndex) ? 1 : 0;
                 output |= bit << bitIndex;
@@ -131,9 +131,9 @@ namespace wdc3.net.Table
             //return output == maxPossibleValue ? -1 : output;
         }
 
-        private string readString(int offset)
+        private string ReadString(int offset)
         {
-            if (offset - _recordData.Count() < 0)
+            if(offset - _recordData.Count() < 0)
                 return $"ERROR:{offset - _recordData.Count()} ";
 
             var chars = _recordDataCombined
@@ -147,7 +147,7 @@ namespace wdc3.net.Table
 
         private int FillBitSizeToByte(int offset)
         {
-            while (offset % 8 != 0)
+            while(offset % 8 != 0)
             {
                 offset++;
             }

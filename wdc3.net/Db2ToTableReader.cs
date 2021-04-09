@@ -34,13 +34,13 @@ namespace wdc3.net
         {
             get
             {
-                foreach (var section in Sections)
-                    if (section is Section defaultSection)
-                        foreach (var record in defaultSection.Records ?? throw new Exception())
-                            foreach (byte data in record.Data ?? throw new Exception())
+                foreach(var section in Sections)
+                    if(section is Section defaultSection)
+                        foreach(var record in defaultSection.Records ?? throw new Exception())
+                            foreach(byte data in record.Data ?? throw new Exception())
                                 yield return data;
-                    else if (section is SectionWithFlag flagSection)
-                        foreach (var data in flagSection.VariableRecordData ?? throw new Exception())
+                    else if(section is SectionWithFlag flagSection)
+                        foreach(var data in flagSection.VariableRecordData ?? throw new Exception())
                             yield return data;
             }
         }
@@ -49,9 +49,9 @@ namespace wdc3.net
         {
             get
             {
-                foreach (var section in Sections)
-                    if (section is Section defaultSection)
-                        foreach (byte data in defaultSection.StringData ?? throw new Exception())
+                foreach(var section in Sections)
+                    if(section is Section defaultSection)
+                        foreach(byte data in defaultSection.StringData ?? throw new Exception())
                             yield return data;
             }
         }
@@ -74,72 +74,72 @@ namespace wdc3.net
             var output = new Db2Table();
             output.Name = _db2File.Name;
             output.Locale = ((Locales)Db2Header.Locale).ToString();
-            output.AddColumns(this.readColumns(_columnInfos));
-            output.AddRows(readRows());
+            output.AddColumns(this.ReadColumns(_columnInfos));
+            output.AddRows(ReadRows());
             return output;
         }
 
-        private IEnumerable<IEnumerable<Db2Cell>> readRows()
+        private IEnumerable<IEnumerable<Db2Cell>> ReadRows()
         {
-            foreach (var rowInfo in _rowInfos)
+            foreach(var rowInfo in _rowInfos)
             {
-                var row = new List<Db2Cell>() { createCellForId(rowInfo.Id) };
-                row.AddRange(readCells(rowInfo).Select(cell => cell));
+                var row = new List<Db2Cell>() { CreateCellForId(rowInfo.Id) };
+                row.AddRange(ReadCells(rowInfo).Select(cell => cell));
                 yield return row;
                 _valueExtractor.NextRow();
             }
         }
 
-        private IEnumerable<Db2Cell> readCells(RowInfo rowInfo)
+        private IEnumerable<Db2Cell> ReadCells(RowInfo rowInfo)
         {
-            foreach (var columnInfo in _columnInfos)
+            foreach(var columnInfo in _columnInfos)
             {
-                if (!columnInfo.IsId)
+                if(!columnInfo.IsId)
                 {
-                    yield return new Db2Cell() { ColumnName = columnInfo.Name, Value = readValue(rowInfo, columnInfo) };
+                    yield return new Db2Cell() { ColumnName = columnInfo.Name, Value = ReadValue(rowInfo, columnInfo) };
                 }
             }
         }
 
-        private Db2Cell createCellForId(uint id) => new Db2Cell() { ColumnName = _columnInfos.Where(col => col.IsId).First().Name, Value = id };
+        private Db2Cell CreateCellForId(uint id) => new Db2Cell() { ColumnName = _columnInfos.Where(col => col.IsId).First().Name, Value = id };
 
-        private object readValue(RowInfo rowInfo, ColumnInfo columnInfo)
+        private object ReadValue(RowInfo rowInfo, ColumnInfo columnInfo)
         {
-            var (_, structure, storageInfo) = getColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
+            var (_, structure, storageInfo) = GetColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
             return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo, rowInfo);
         }
 
         private IEnumerable<uint> ReadOffsetMapIds()
         {
-            foreach (var section in Sections)
-                if (section is SectionWithFlag flagSection && flagSection.OffsetMapIdList is not null)
-                    foreach (var offsetMapId in flagSection.OffsetMapIdList)
+            foreach(var section in Sections)
+                if(section is SectionWithFlag flagSection && flagSection.OffsetMapIdList is not null)
+                    foreach(var offsetMapId in flagSection.OffsetMapIdList)
                         yield return offsetMapId;
         }
 
-        private IEnumerable<(string name, Db2ValueTypes type)> readColumns(IEnumerable<ColumnInfo> columnInfos)
+        private IEnumerable<(string name, Db2ValueTypes type)> ReadColumns(IEnumerable<ColumnInfo> columnInfos)
         {
-            foreach (var colInfo in columnInfos)
+            foreach(var colInfo in columnInfos)
                 yield return colInfo != null && colInfo.Name != null
                     ? (colInfo.Name, colInfo.Type)
                     : throw new Exception();
         }
 
-        private IEnumerable<(ColumnInfo Info, FieldStructure Structure, IFieldStorageInfo StorageInfo)> getColumnReadInfos()
+        private IEnumerable<(ColumnInfo Info, FieldStructure Structure, IFieldStorageInfo StorageInfo)> GetColumnReadInfos()
         {
             var fieldStructures = FieldStructures.ToArray();
             var fieldStorageInfos = FieldStorageInfos.ToArray();
             var columnInfos = _columnInfos.Where(column => !column.IsId).ToArray();
 
-            for (int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
+            for(int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
                 yield return (columnInfos[columnIndex], fieldStructures[columnIndex], fieldStorageInfos[columnIndex]);
         }
 
         private IEnumerable<RowInfo> ReadRowInfos()
         {
-            foreach (var section in Sections)
+            foreach(var section in Sections)
             {
-                for (int index = 0; index < section.IdList?.Count(); index++)
+                for(int index = 0; index < section.IdList?.Count(); index++)
                 {
                     var id = section.IdList.Skip(index).First();
                     var offsetMap = section.OffsetMap?.Skip(index).First();
