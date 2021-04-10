@@ -13,9 +13,15 @@ namespace wdc3.net.Table
     {
         private const int PALLET_VALUE_SIZE = sizeof(int);
         private byte[] _recordData;
-        private int _recordDataOffset;
+        private readonly int _recordDataOffset;
 
         private int _forcedStringOffset = 0;
+
+        private int _rowOffset = 0;
+
+        private RowInfo _currentRowInfo = null;
+
+        private int _readRows = 0;
 
         public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, int recordDataOffset)
         {
@@ -25,21 +31,38 @@ namespace wdc3.net.Table
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
-            var valueOffset = (int)(((rowInfo?.Offset ?? throw new Exception()) - _recordDataOffset) + fieldStorageInfo.FieldOffsetBits);
+            if(_currentRowInfo is null)
+                _currentRowInfo = rowInfo;
 
-            if (columnInfo.Type == Db2ValueTypes.Text && _forcedStringOffset != 0)
+            if(_currentRowInfo.Id != rowInfo.Id)
+            {
+                Next();
+                _currentRowInfo = rowInfo;
+            }
+
+            var columnOffset = (int)(fieldStorageInfo.FieldOffsetBits);
+
+            var valueOffset = _rowOffset + columnOffset;
+
+            if(columnInfo.Type == Db2ValueTypes.Text && _forcedStringOffset != 0)
                 valueOffset = _forcedStringOffset;
 
             var output = columnInfo.ArrayLength > 0
                 ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
-            if (output is string text)
+            if(output is string text)
                 _forcedStringOffset = valueOffset + ((text.Length + sizeof(byte)) * 8);
             else
                 _forcedStringOffset = 0;
 
             return output;
+        }
+
+        private void Next()
+        {
+            _rowOffset += (_currentRowInfo.Size ?? throw new Exception()) * 8;
+            _readRows++;
         }
 
         public void NextRow()
@@ -48,11 +71,11 @@ namespace wdc3.net.Table
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)
         {
-            for (int i = 0; i < count; i++)
+            for(int i = 0; i < count; i++)
             {
                 var output = ExtractSingle(type, size, isSigned, valueOffset + (size * i));
 
-                if (output is float dOut)
+                if(output is float dOut)
                     yield return float.IsNaN(dOut) ? dOut.ToString() : output;
                 else
                     yield return output;
