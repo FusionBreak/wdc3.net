@@ -45,9 +45,9 @@ namespace wdc3.net.test.Table
                 },
             });
 
-            foreach (var a in table.GetValues())
+            foreach(var a in table.GetValues())
             {
-                foreach (var b in a)
+                foreach(var b in a)
                 {
                     var value = b;
                     var type = b.GetType();
