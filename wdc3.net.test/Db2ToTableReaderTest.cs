@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace wdc3.net.test
 {
@@ -60,6 +63,19 @@ namespace wdc3.net.test
             var reader = new Db2ToTableReader(TestFiles.MAP_DB2_PATH, TestFiles.MAP_DBD_PATH);
             var table = reader.Read();
             Assert.Equal(24, table.ColumnCount);
+        }
+
+        [Theory]
+        [InlineData(0, new string[] { "25", "-1", "", "", "", "", "Worn Shortsword", "0,5", "0", "0", "0", "0", "[0,0,0,0,0,0,0,0,0,0]", "[0,0,0,0,0,0,0,0,0,0]", "1", "0", "0", "3", "18", "1", "1", "0,972", "[0,8192,8388608,0]", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "[0,0]", "0", "0", "0", "0", "2600", "0", "0", "0", "1", "-1", "0", "0", "0", "0", "[0,0,0]", "3", "1", "0", "1", "0", "0", "[0,0,0,0,0,0,0,0,0,0]", "0", "0", "0", "0", "1", "21", "1" })]
+        [InlineData(1, new string[] { "35", "-1", "", "", "", "", "Bent Staff", "0,3", "0", "0", "0", "0", "[0,0,0,0,0,0,0,0,0,0]", "[0,0,0,0,0,0,0,0,0,0]", "1", "0", "0", "4", "24", "1", "1", "1,0353", "[0,8192,8388608,0]", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "[0,0]", "0", "0", "0", "0", "3600", "0", "0", "0", "1", "-1", "0", "0", "0", "0", "[0,0,0]", "2", "2", "0", "0", "0", "0", "[0,0,0,0,0,0,0,0,0,0]", "0", "0", "0", "0", "1", "17", "1" })]
+        public void CanReadFirstTwoLinesOfItemSparse(int line, string[] expectedValues)
+        {
+            var reader = new Db2ToTableReader(TestFiles.ITEM_SPARSE_DB2_PATH, TestFiles.ITEM_SPARSE_DBD_PATH);
+            var table = reader.Read();
+            var readed = string.Join(", ", table.GetValues().Skip(line).First().Select(value => value.ToString()).ToArray());
+            var expected = string.Join(", ", expectedValues.Select(value => value.ToString()).ToArray());
+
+            Assert.Equal(expected, readed);
         }
     }
 }
