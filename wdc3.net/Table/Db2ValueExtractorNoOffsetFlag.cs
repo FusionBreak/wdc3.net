@@ -155,8 +155,9 @@ namespace wdc3.net.Table
             return offset;
         }
 
-        public void NextRow()
+        public void NextRow(RowInfo rowInfo)
         {
+            _ = rowInfo;
             _currentRow++;
             _additionalDataOffset = 0;
         }

@@ -19,8 +19,6 @@ namespace wdc3.net.Table
 
         private int _rowOffset = 0;
 
-        private RowInfo _currentRowInfo = null;
-
         private int _readRows = 0;
 
         public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, int recordDataOffset)
@@ -31,16 +29,7 @@ namespace wdc3.net.Table
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
-            if(_currentRowInfo is null)
-                _currentRowInfo = rowInfo;
-
-            if(_currentRowInfo.Id != rowInfo.Id)
-            {
-                Next();
-                _currentRowInfo = rowInfo;
-            }
-
-            var columnOffset = (int)(fieldStorageInfo.FieldOffsetBits);
+            var columnOffset = (int)fieldStorageInfo.FieldOffsetBits;
 
             var valueOffset = _rowOffset + columnOffset;
 
@@ -52,21 +41,17 @@ namespace wdc3.net.Table
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
             if(output is string text)
-                _forcedStringOffset = valueOffset + ((text.Length + sizeof(byte)) * 8);
+                _forcedStringOffset = valueOffset + ((text.Length + 1) * 8);
             else
                 _forcedStringOffset = 0;
 
             return output;
         }
 
-        private void Next()
+        public void NextRow(RowInfo rowInfo)
         {
-            _rowOffset += (_currentRowInfo.Size ?? throw new Exception()) * 8;
+            _rowOffset += (rowInfo.Size ?? throw new Exception()) * 8;
             _readRows++;
-        }
-
-        public void NextRow()
-        {
         }
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)

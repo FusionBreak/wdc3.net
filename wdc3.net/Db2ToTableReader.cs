@@ -86,7 +86,7 @@ namespace wdc3.net
                 var row = new List<Db2Cell>() { CreateCellForId(rowInfo.Id) };
                 row.AddRange(ReadCells(rowInfo).Select(cell => cell));
                 yield return row;
-                _valueExtractor.NextRow();
+                _valueExtractor.NextRow(rowInfo);
             }
         }
 

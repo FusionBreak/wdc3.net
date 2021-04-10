@@ -11,6 +11,6 @@ namespace wdc3.net.Table
     {
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo);
 
-        public void NextRow();
+        public void NextRow(RowInfo rowInfo);
     }
 }
