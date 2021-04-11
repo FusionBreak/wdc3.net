@@ -11,15 +11,11 @@ namespace wdc3.net.Table
 {
     internal class Db2ValueExtractorWithOffsetFlag : IDb2ValueExtractor
     {
-        private const int PALLET_VALUE_SIZE = sizeof(int);
         private byte[] _recordData;
         private readonly int _recordDataOffset;
 
-        private int _forcedStringOffset = 0;
-
+        private int _stringCorrection = 0;
         private int _rowOffset = 0;
-
-        private int _readRows = 0;
 
         public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, int recordDataOffset)
         {
@@ -31,19 +27,14 @@ namespace wdc3.net.Table
         {
             var columnOffset = (int)fieldStorageInfo.FieldOffsetBits;
 
-            var valueOffset = _rowOffset + columnOffset;
-
-            if(columnInfo.Type == Db2ValueTypes.Text && _forcedStringOffset != 0)
-                valueOffset = _forcedStringOffset;
+            var valueOffset = _rowOffset + columnOffset - _stringCorrection;
 
             var output = columnInfo.ArrayLength > 0
                 ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
-            if(output is string text)
-                _forcedStringOffset = valueOffset + ((text.Length + 1) * 8);
-            else
-                _forcedStringOffset = 0;
+            if(output is string text && columnInfo.Type == Db2ValueTypes.Text)
+                _stringCorrection += (int)fieldStorageInfo.FieldSizeBits - ((text.Length + 1) * 8);
 
             return output;
         }
@@ -51,7 +42,7 @@ namespace wdc3.net.Table
         public void NextRow(RowInfo rowInfo)
         {
             _rowOffset += (rowInfo.Size ?? throw new Exception()) * 8;
-            _readRows++;
+            _stringCorrection = 0;
         }
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)
