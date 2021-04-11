@@ -17,20 +17,20 @@ namespace wdc3.net.native
         {
             InitializeComponent();
 
-            const string db = "ItemSparse";
+            const string db = "Map";
             var reader = new Db2ToTableReader(@$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db.ToLower()}.db2", @$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db}.dbd");
             var table = reader.Read();
-            var rows = table.GetValues().ToArray();
+            var rows = table.GetValuesAsArray();
+
+            DataTable data = new DataTable();
 
             foreach(var column in table.ColumnNames)
-                dataGridView1.Columns.Add(column, column);
+                data.Columns.Add(column);
 
-            foreach(var row in rows[0..10])
-                dataGridView1.Rows.Add(row.ToArray());
+            foreach(var row in rows)
+                data.Rows.Add(row);
 
-            foreach(var row in rows.Skip(rows.Count() - 10))
-                dataGridView1.Rows.Add(row.ToArray());
-
+            dataGridView1.DataSource = data;
             dataGridView1.Update();
         }
     }

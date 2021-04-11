@@ -14,7 +14,7 @@ namespace wdc3.net.Table
 
         public void AddColumns(IEnumerable<(string name, Db2ValueTypes type)> infos)
         {
-            foreach (var (name, type) in infos)
+            foreach(var (name, type) in infos)
                 AddColumn(name, type);
         }
 
@@ -26,24 +26,39 @@ namespace wdc3.net.Table
 
         public void AddRows(IEnumerable<IEnumerable<Db2Cell>> rows)
         {
-            foreach (var row in rows)
+            foreach(var row in rows)
                 AddRow(row);
         }
 
         public IEnumerable<IEnumerable<object?>> GetValues()
         {
-            foreach (var row in _rows)
+            foreach(var row in _rows)
             {
-                yield return getRowValues(row);
+                yield return GetRowValues(row);
             }
         }
 
-        private IEnumerable<object?> getRowValues(IEnumerable<Db2Cell> row)
+        private IEnumerable<object?> GetRowValues(IEnumerable<Db2Cell> row)
         {
-            foreach (var column in _columns)
+            foreach(var column in _columns)
             {
                 yield return row.First(cell => cell.ColumnName == column.Key).Value; //Convert.ChangeType(row.First(cell => cell.ColumnName == column.Key).Value, column.Value);
             }
+        }
+
+        public object?[][] GetValuesAsArray()
+        {
+            var output = new List<object?[]>();
+
+            foreach(var row in _rows)
+                output.Add(GetRowValuesAsArray(row));
+
+            return output.ToArray();
+        }
+
+        private object?[] GetRowValuesAsArray(IEnumerable<Db2Cell> row)
+        {
+            return GetRowValues(row).ToArray();
         }
 
         private readonly List<IEnumerable<Db2Cell>> _rows = new();
