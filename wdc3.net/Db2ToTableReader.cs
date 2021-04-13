@@ -64,9 +64,10 @@ namespace wdc3.net
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
             _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception()).ToArray();
             _rowInfos = ReadRowInfos().ToArray();
+
             _valueExtractor = (_db2.Header.Flags & 1) == 0
                 ? new Db2ValueExtractorNoOffsetFlag(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize)
-                : new Db2ValueExtractorWithOffsetFlag(RecordData, (int)(_db2?.SectionHeaders?.First().FileOffset ?? throw new Exception($"{nameof(SectionHeader.FileOffset)} was null")));
+                : new Db2ValueExtractorWithOffsetFlag(RecordData, RowOffsetCalculator.Calculate(Sections.Select(section => (SectionWithFlag)section)));
         }
 
         public Db2Table Read()

@@ -12,22 +12,23 @@ namespace wdc3.net.Table
     internal class Db2ValueExtractorWithOffsetFlag : IDb2ValueExtractor
     {
         private byte[] _recordData;
-        private readonly int _recordDataOffset;
+        private RowOffset[] _rowOffsets;
 
         private int _stringCorrection = 0;
-        private int _rowOffset = 0;
 
-        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, int recordDataOffset)
+        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, IEnumerable<RowOffset> rowOffsets)
         {
             _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
-            _recordDataOffset = recordDataOffset;
+            _rowOffsets = rowOffsets.ToArray() ?? throw new ArgumentNullException(nameof(rowOffsets));
         }
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
             var columnOffset = (int)fieldStorageInfo.FieldOffsetBits;
 
-            var valueOffset = _rowOffset + columnOffset - _stringCorrection;
+            var rowOffset = _rowOffsets.First(row => row.RowId == rowInfo.Id).Offset;
+
+            var valueOffset = (int)(rowOffset + columnOffset - _stringCorrection);
 
             var output = columnInfo.ArrayLength > 0
                 ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
@@ -41,7 +42,6 @@ namespace wdc3.net.Table
 
         public void NextRow(RowInfo rowInfo)
         {
-            _rowOffset += (rowInfo.Size ?? throw new Exception()) * 8;
             _stringCorrection = 0;
         }
 
