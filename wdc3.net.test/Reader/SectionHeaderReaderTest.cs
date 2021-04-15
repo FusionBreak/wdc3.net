@@ -48,18 +48,18 @@ namespace wdc3.net.test.Reader
         {
             new SectionHeader() {
                 TactKeyHash = 0,
-                FileOffset = 3252,
-                RecordCount = 1022,
-                StringTableSize = 55803,
+                FileOffset = 3456,
+                RecordCount = 1082,
+                StringTableSize = 58346,
                 OffsetRecordsEnd = 0,
-                IdListSize = 4088,
+                IdListSize = 4328,
                 RelationsshipDataSize = 0,
                 OffsetMapIdCount = 0,
                 CopyTableCount = 0
             },
             new SectionHeader() {
                 TactKeyHash = 1725015195270896445,
-                FileOffset = 112199,
+                FileOffset = 122394,
                 RecordCount = 1,
                 StringTableSize = 24,
                 OffsetRecordsEnd = 0,
@@ -70,7 +70,7 @@ namespace wdc3.net.test.Reader
             },
             new SectionHeader() {
                 TactKeyHash = 9485332275027175826,
-                FileOffset = 112275,
+                FileOffset = 122474,
                 RecordCount = 1,
                 StringTableSize = 21,
                 OffsetRecordsEnd = 0,
@@ -81,7 +81,7 @@ namespace wdc3.net.test.Reader
             },
             new SectionHeader() {
                 TactKeyHash = 15074942342469000434,
-                FileOffset = 112348,
+                FileOffset = 122551,
                 RecordCount = 1,
                 StringTableSize = 28,
                 OffsetRecordsEnd = 0,

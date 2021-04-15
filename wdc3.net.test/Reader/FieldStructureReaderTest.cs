@@ -35,7 +35,7 @@ namespace wdc3.net.test.Reader
             Assert.Equal(24, fieldStructures[6].Position);
 
             Assert.Equal(32, fieldStructures[22].Size);
-            Assert.Equal(32, fieldStructures[22].Position);
+            Assert.Equal(36, fieldStructures[22].Position);
         }
     }
 }
