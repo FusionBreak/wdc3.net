@@ -12,19 +12,30 @@ namespace wdc3.net.Table
         public static IEnumerable<RowOffset> Calculate(IEnumerable<SectionWithFlag> sections)
         {
             var start = sections.First().OffsetMap?.First().Offset;
+            uint sectionSizeCorrection = 0;
 
             foreach(var section in sections)
             {
-                foreach(var offsetMap in section.OffsetMap ?? throw new Exception())
+                if(section.OffsetMap is null)
+                    throw new Exception();
+
+                if(section.IdList is null)
+                    throw new Exception();
+
+                var offsetMaps = section.OffsetMap.ToArray();
+                var ids = section.IdList.ToArray();
+
+                for(int offsetMapIndex = 0; offsetMapIndex < offsetMaps.Length; offsetMapIndex++)
                 {
-                    if(offsetMap is null)
-                        throw new Exception();
-
-                    var offset = offsetMap.Offset;
+                    yield return new RowOffset()
+                    {
+                        Offset = (offsetMaps[offsetMapIndex].Offset - start - sectionSizeCorrection) ?? 0,
+                        RowId = ids[offsetMapIndex]
+                    };
                 }
-            }
 
-            yield return null;
+                sectionSizeCorrection += (uint)section.SizeOfWithoutVariableRecordData;
+            }
         }
     }
 }

@@ -20,22 +20,22 @@ namespace wdc3.net.File
             {
                 var size = 0;
 
-                size += IdList.Count() * sizeof(uint);
+                size += (IdList is not null ? IdList.Count() : 0) * sizeof(uint);
 
-                foreach(var entry in CopyTable)
+                foreach(var entry in CopyTable is not null ? CopyTable : new CopyTableEntry[0])
                     size += entry.SizeOf;
 
-                foreach(var entry in OffsetMap)
+                foreach(var entry in OffsetMap is not null ? OffsetMap : new OffsetMapEntry[0])
                     size += entry.SizeOf;
 
-                size += RelationshipMap.SizeOf;
+                size += RelationshipMap is not null ? RelationshipMap.SizeOf : 0;
 
-                size += OffsetMapIdList.Count() * sizeof(uint);
+                size += (OffsetMapIdList is not null ? OffsetMapIdList.Count() : 0) * sizeof(uint);
 
                 return size;
             }
         }
 
-        public int SizeOf => SizeOf + VariableRecordData.Count();
+        public int SizeOf => SizeOfWithoutVariableRecordData + (VariableRecordData is not null ? VariableRecordData.Count() : 0);
     }
 }

@@ -14,6 +14,9 @@ namespace wdc3.net.Table
         private byte[] _recordData;
         private RowOffset[] _rowOffsets;
 
+        private uint _currentOffset = 0;
+        private int _currentRow = 0;
+
         private int _stringCorrection = 0;
 
         public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, IEnumerable<RowOffset> rowOffsets)
@@ -26,23 +29,34 @@ namespace wdc3.net.Table
         {
             var columnOffset = (int)fieldStorageInfo.FieldOffsetBits;
 
-            var rowOffset = _rowOffsets.First(row => row.RowId == rowInfo.Id).Offset;
+            var valueOffset = (int)(_currentOffset + columnOffset - _stringCorrection);
 
-            var valueOffset = (int)(rowOffset + columnOffset - _stringCorrection);
-
-            var output = columnInfo.ArrayLength > 0
+            try
+            {
+                var output = columnInfo.ArrayLength > 0
                 ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
-            if(output is string text && columnInfo.Type == Db2ValueTypes.Text)
-                _stringCorrection += (int)fieldStorageInfo.FieldSizeBits - ((text.Length + 1) * 8);
+                if(output is string text && columnInfo.Type == Db2ValueTypes.Text)
+                    _stringCorrection += (int)fieldStorageInfo.FieldSizeBits - ((text.Length + 1) * 8);
 
-            return output;
+                return output;
+            }
+            catch
+            {
+                return "ERROR";
+            }
         }
 
         public void NextRow(RowInfo rowInfo)
         {
             _stringCorrection = 0;
+            _currentRow++;
+            try
+            {
+                _currentOffset = _rowOffsets[_currentRow].Offset * 8;
+            }
+            catch { }
         }
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)
