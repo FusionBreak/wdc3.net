@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using wdc3.net.Enums;
 
@@ -9,6 +10,22 @@ namespace wdc3.net.Table
     {
         public string? Name { get; set; }
         public string? Locale { get; set; }
+
+        public DataTable DataTable
+        {
+            get
+            {
+                DataTable data = new DataTable();
+
+                foreach(var column in ColumnNames)
+                    data.Columns.Add(column);
+
+                foreach(var row in ValuesAsArray)
+                    data.Rows.Add(row);
+
+                return data;
+            }
+        }
 
         public void AddColumn(string name, Db2ValueTypes type) => _columns.Add(name, type);
 
@@ -30,11 +47,14 @@ namespace wdc3.net.Table
                 AddRow(row);
         }
 
-        public IEnumerable<IEnumerable<object?>> GetValues()
+        public IEnumerable<IEnumerable<object?>> Values
         {
-            foreach(var row in _rows)
+            get
             {
-                yield return GetRowValues(row);
+                foreach(var row in _rows)
+                {
+                    yield return GetRowValues(row);
+                }
             }
         }
 
@@ -42,18 +62,21 @@ namespace wdc3.net.Table
         {
             foreach(var column in _columns)
             {
-                yield return row.First(cell => cell.ColumnName == column.Key).Value; //Convert.ChangeType(row.First(cell => cell.ColumnName == column.Key).Value, column.Value);
+                yield return row.First(cell => cell.ColumnName == column.Key).Value;
             }
         }
 
-        public object?[][] GetValuesAsArray()
+        public object?[][] ValuesAsArray
         {
-            var output = new List<object?[]>();
+            get
+            {
+                var output = new List<object?[]>();
 
-            foreach(var row in _rows)
-                output.Add(GetRowValuesAsArray(row));
+                foreach(var row in _rows)
+                    output.Add(GetRowValuesAsArray(row));
 
-            return output.ToArray();
+                return output.ToArray();
+            }
         }
 
         private object?[] GetRowValuesAsArray(IEnumerable<Db2Cell> row)

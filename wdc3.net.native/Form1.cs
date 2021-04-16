@@ -20,17 +20,8 @@ namespace wdc3.net.native
             const string db = "ItemSparse";
             var reader = new Db2ToTableReader(@$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db.ToLower()}.db2", @$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db}.dbd");
             var table = reader.Read();
-            var rows = table.GetValuesAsArray();
 
-            DataTable data = new DataTable();
-
-            foreach(var column in table.ColumnNames)
-                data.Columns.Add(column);
-
-            foreach(var row in rows)
-                data.Rows.Add(row);
-
-            dataGridView1.DataSource = data;
+            dataGridView1.DataSource = table.DataTable;
             dataGridView1.Update();
         }
     }

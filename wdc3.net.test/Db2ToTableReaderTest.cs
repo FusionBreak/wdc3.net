@@ -72,7 +72,7 @@ namespace wdc3.net.test
         {
             var reader = new Db2ToTableReader(TestFiles.ITEM_SPARSE_DB2_PATH, TestFiles.ITEM_SPARSE_DBD_PATH);
             var table = reader.Read();
-            var readed = string.Join(", ", table.GetValues().Skip(line).First().Select(value => value.ToString()).ToArray());
+            var readed = string.Join(", ", table.Values.Skip(line).First().Select(value => value.ToString()).ToArray());
             var expected = string.Join(", ", expectedValues.Select(value => value.ToString()).ToArray());
 
             Assert.Equal(expected, readed);
