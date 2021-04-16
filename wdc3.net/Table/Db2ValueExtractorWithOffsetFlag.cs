@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using wdc3.net.Enums;
 using wdc3.net.File;
 
@@ -11,14 +9,11 @@ namespace wdc3.net.Table
 {
     internal class Db2ValueExtractorWithOffsetFlag : IDb2ValueExtractor
     {
-        private byte[] _recordData;
+        private readonly byte[] _recordData;
 
         private int _stringCorrection = 0;
 
-        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData)
-        {
-            _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
-        }
+        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData) => _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
@@ -33,7 +28,7 @@ namespace wdc3.net.Table
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
                 if(output is string text && columnInfo.Type == Db2ValueTypes.Text)
-                    _stringCorrection += (int)fieldStorageInfo.FieldSizeBits - ((text.Length + 1) * 8);
+                    _stringCorrection += fieldStorageInfo.FieldSizeBits - ((text.Length + 1) * 8);
 
                 return output;
             }
@@ -43,10 +38,7 @@ namespace wdc3.net.Table
             }
         }
 
-        public void NextRow(RowInfo rowInfo)
-        {
-            _stringCorrection = 0;
-        }
+        public void NextRow(RowInfo rowInfo) => _stringCorrection = 0;
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)
         {

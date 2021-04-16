@@ -2,9 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using wdc3.net.Enums;
 using wdc3.net.File;
 
@@ -14,18 +12,18 @@ namespace wdc3.net.Table
     {
         private const int PALLET_VALUE_SIZE = sizeof(int);
 
-        private int _recordSize = 0;
-        private byte[] _palletData;
-        private byte[] _commonData;
-        private byte[] _recordData;
-        private byte[] _recordStringData;
-        private byte[] _recordDataCombined;
-        private BitArray _recordDataAsBits;
+        private readonly int _recordSize = 0;
+        private readonly byte[] _palletData;
+        private readonly byte[] _commonData;
+        private readonly byte[] _recordData;
+        private readonly byte[] _recordStringData;
+        private readonly byte[] _recordDataCombined;
+        private readonly BitArray _recordDataAsBits;
 
         private uint _additionalDataOffset = 0;
 
         private int _currentRow = 0;
-        private int _rowBitSize = 0;
+        private readonly int _rowBitSize = 0;
         private int CurrentRowBitOffset => _currentRow * _rowBitSize;
 
         private IEnumerable<int> PalletValues

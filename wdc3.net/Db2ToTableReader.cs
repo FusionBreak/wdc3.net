@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using wdc3.net.Enums;
 using wdc3.net.File;
 using wdc3.net.Reader;
@@ -13,19 +11,19 @@ namespace wdc3.net
 {
     public class Db2ToTableReader
     {
-        private FileInfo _db2File;
-        private FileInfo _dbdFile;
-        private Db2 _db2;
-        private Db2Definition _dbd;
-        private ColumnInfo[] _columnInfos;
-        private RowInfo[] _rowInfos;
+        private readonly FileInfo _db2File;
+        private readonly FileInfo _dbdFile;
+        private readonly Db2 _db2;
+        private readonly Db2Definition _dbd;
+        private readonly ColumnInfo[] _columnInfos;
+        private readonly RowInfo[] _rowInfos;
 
         private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
         private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
         private IEnumerable<FieldStructure> FieldStructures => _db2.FieldStructures ?? throw new ArgumentNullException(nameof(_db2.FieldStructures));
         private IEnumerable<IFieldStorageInfo> FieldStorageInfos => _db2.FieldStorageInfos ?? throw new ArgumentNullException(nameof(_db2.FieldStorageInfos));
 
-        private IDb2ValueExtractor _valueExtractor;
+        private readonly IDb2ValueExtractor _valueExtractor;
 
         private IEnumerable<byte> PalletData => _db2.PalletData ?? throw new ArgumentNullException(nameof(_db2.PalletData));
         private IEnumerable<byte> CommonData => _db2.CommonData ?? throw new ArgumentNullException(nameof(_db2.CommonData));
@@ -72,10 +70,12 @@ namespace wdc3.net
 
         public Db2Table Read()
         {
-            var output = new Db2Table();
-            output.Name = _db2File.Name;
-            output.Locale = ((Locales)Db2Header.Locale).ToString();
-            output.AddColumns(this.ReadColumns(_columnInfos));
+            var output = new Db2Table
+            {
+                Name = _db2File.Name,
+                Locale = ((Locales)Db2Header.Locale).ToString()
+            };
+            output.AddColumns(ReadColumns(_columnInfos));
             output.AddRows(ReadRows());
             return output;
         }

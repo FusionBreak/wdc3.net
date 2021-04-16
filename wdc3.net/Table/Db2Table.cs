@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using wdc3.net.Enums;
@@ -79,10 +78,7 @@ namespace wdc3.net.Table
             }
         }
 
-        private object?[] GetRowValuesAsArray(IEnumerable<Db2Cell> row)
-        {
-            return GetRowValues(row).ToArray();
-        }
+        private object?[] GetRowValuesAsArray(IEnumerable<Db2Cell> row) => GetRowValues(row).ToArray();
 
         private readonly List<IEnumerable<Db2Cell>> _rows = new();
         private readonly Dictionary<string, Db2ValueTypes> _columns = new();

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using wdc3.net.Enums;
 
 namespace wdc3.net.Table

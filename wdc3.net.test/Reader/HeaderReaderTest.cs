@@ -18,7 +18,7 @@ namespace wdc3.net.test.Reader
             Assert.Equal((uint)24, header.FieldCount);
             Assert.Equal((uint)52, header.RecordSize);
             Assert.Equal((uint)58419, header.StringTableSize);
-            Assert.Equal((uint)3179597154, header.TableHash);
+            Assert.Equal(3179597154, header.TableHash);
             Assert.Equal((uint)2034192014, header.LayoutHash);
             Assert.Equal((uint)0, header.MinId);
             Assert.Equal((uint)2453, header.MaxId);
