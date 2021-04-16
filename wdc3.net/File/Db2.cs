@@ -11,5 +11,7 @@ namespace wdc3.net.File
         public IEnumerable<byte>? PalletData { get; set; }
         public IEnumerable<byte>? CommonData { get; set; }
         public IEnumerable<ISection>? Sections { get; set; }
+
+        public bool HasOffsetFlag => (Header?.Flags & 1) == 0;
     }
 }

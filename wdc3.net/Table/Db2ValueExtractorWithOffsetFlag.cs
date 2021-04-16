@@ -12,24 +12,19 @@ namespace wdc3.net.Table
     internal class Db2ValueExtractorWithOffsetFlag : IDb2ValueExtractor
     {
         private byte[] _recordData;
-        private RowOffset[] _rowOffsets;
-
-        private uint _currentOffset = 0;
-        private int _currentRow = 0;
 
         private int _stringCorrection = 0;
 
-        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData, IEnumerable<RowOffset> rowOffsets)
+        public Db2ValueExtractorWithOffsetFlag(IEnumerable<byte> recordData)
         {
             _recordData = recordData.ToArray() ?? throw new ArgumentNullException(nameof(recordData));
-            _rowOffsets = rowOffsets.ToArray() ?? throw new ArgumentNullException(nameof(rowOffsets));
         }
 
         public object ExtractValue(FieldStructure fieldStructure, IFieldStorageInfo fieldStorageInfo, ColumnInfo columnInfo, RowInfo rowInfo)
         {
             var columnOffset = (int)fieldStorageInfo.FieldOffsetBits;
 
-            var valueOffset = (int)(_currentOffset + columnOffset - _stringCorrection);
+            var valueOffset = (int)((rowInfo.Offset is not null ? rowInfo.Offset * 8 : 0) + columnOffset - _stringCorrection);
 
             try
             {
@@ -51,12 +46,6 @@ namespace wdc3.net.Table
         public void NextRow(RowInfo rowInfo)
         {
             _stringCorrection = 0;
-            _currentRow++;
-            try
-            {
-                _currentOffset = _rowOffsets[_currentRow].Offset * 8;
-            }
-            catch { }
         }
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)

@@ -63,11 +63,11 @@ namespace wdc3.net
             _db2 = new Db2Reader().ReadFile(_db2File.FullName);
             _dbd = new DbdReader().ReadFile(_dbdFile.FullName);
             _columnInfos = TableColumnInformationFactory.CreateColumnInformation(_dbd, _db2.Header != null ? _db2.Header.LayoutHash : throw new Exception()).ToArray();
-            _rowInfos = ReadRowInfos().ToArray();
+            _rowInfos = RowInfoReader.ReadRowInfos(Sections, _db2.HasOffsetFlag).ToArray();
 
             _valueExtractor = (_db2.Header.Flags & 1) == 0
                 ? new Db2ValueExtractorNoOffsetFlag(PalletData, CommonData, RecordData, RecordStringData, FieldStorageInfos.Sum(info => info.FieldSizeBits), (int)_db2.Header.RecordSize)
-                : new Db2ValueExtractorWithOffsetFlag(RecordData, RowOffsetCalculator.Calculate(Sections.Select(section => (SectionWithFlag)section)));
+                : new Db2ValueExtractorWithOffsetFlag(RecordData);
         }
 
         public Db2Table Read()
@@ -134,27 +134,6 @@ namespace wdc3.net
 
             for(int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
                 yield return (columnInfos[columnIndex], fieldStructures[columnIndex], fieldStorageInfos[columnIndex]);
-        }
-
-        private IEnumerable<RowInfo> ReadRowInfos()
-        {
-            foreach(var section in Sections)
-            {
-                for(int index = 0; index < section.IdList?.Count(); index++)
-                {
-                    var id = section.IdList.Skip(index).First();
-                    var offsetMap = section.OffsetMap?.Skip(index).First();
-                    var offsetMapId = section.OffsetMapIdList?.Skip(index).First();
-
-                    yield return new RowInfo()
-                    {
-                        Id = id,
-                        Offset = offsetMap?.Offset,
-                        Size = offsetMap?.Size,
-                        OffsetMapId = offsetMapId
-                    };
-                }
-            }
         }
     }
 }
