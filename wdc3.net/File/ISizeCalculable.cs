@@ -1,4 +1,4 @@
-﻿namespace wdc3.net.Helper
+﻿namespace wdc3.net.File
 {
     internal interface ISizeCalculable
     {

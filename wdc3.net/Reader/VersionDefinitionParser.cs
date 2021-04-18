@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using wdc3.net.Enums;
-using wdc3.net.Factorys;
 using wdc3.net.File;
 
 namespace wdc3.net.Reader

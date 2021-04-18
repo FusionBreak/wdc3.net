@@ -1,6 +1,4 @@
-﻿using wdc3.net.Helper;
-
-namespace wdc3.net.File
+﻿namespace wdc3.net.File
 {
     public class CopyTableEntry : ISizeCalculable
     {

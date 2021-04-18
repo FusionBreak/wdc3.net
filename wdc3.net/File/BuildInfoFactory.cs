@@ -1,6 +1,4 @@
-﻿using wdc3.net.File;
-
-namespace wdc3.net.Factorys
+﻿namespace wdc3.net.File
 {
     public class BuildInfoFactory
     {
