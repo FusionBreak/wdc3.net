@@ -13,5 +13,7 @@
         public const string LOCALE_DBD_PATH = "./../../../TestFiles/Locale.dbd";
         public const string TEXTURE_FILE_DATA_DB2_PATH = "./../../../TestFiles/texturefiledata.db2";
         public const string TEXTURE_FILE_DATA_DBD_PATH = "./../../../TestFiles/TextureFileData.dbd";
+
+        public const string MAP_DB2_OUTPUT_PATH = "./../../../TestOutputFiles/map.db2";
     }
 }
