@@ -18,15 +18,19 @@ namespace wdc3.net
         private readonly ColumnInfo[] _columnInfos;
         private readonly RowInfo[] _rowInfos;
 
-        private Header Db2Header => _db2.Header ?? throw new ArgumentNullException(nameof(_db2.Header));
-        private IEnumerable<ISection> Sections => _db2.Sections ?? throw new ArgumentNullException(nameof(_db2.Sections));
-        private IEnumerable<FieldStructure> FieldStructures => _db2.FieldStructures ?? throw new ArgumentNullException(nameof(_db2.FieldStructures));
-        private IEnumerable<IFieldStorageInfo> FieldStorageInfos => _db2.FieldStorageInfos ?? throw new ArgumentNullException(nameof(_db2.FieldStorageInfos));
+        private Header Db2Header => SourceDb2.Header ?? throw new ArgumentNullException(nameof(SourceDb2.Header));
+        private IEnumerable<ISection> Sections => SourceDb2.Sections ?? throw new ArgumentNullException(nameof(SourceDb2.Sections));
+        private IEnumerable<FieldStructure> FieldStructures => SourceDb2.FieldStructures ?? throw new ArgumentNullException(nameof(SourceDb2.FieldStructures));
+        private IEnumerable<IFieldStorageInfo> FieldStorageInfos => SourceDb2.FieldStorageInfos ?? throw new ArgumentNullException(nameof(SourceDb2.FieldStorageInfos));
 
         private readonly IDb2ValueExtractor _valueExtractor;
 
-        private IEnumerable<byte> PalletData => _db2.PalletData ?? throw new ArgumentNullException(nameof(_db2.PalletData));
-        private IEnumerable<byte> CommonData => _db2.CommonData ?? throw new ArgumentNullException(nameof(_db2.CommonData));
+        private IEnumerable<byte> PalletData => SourceDb2.PalletData ?? throw new ArgumentNullException(nameof(SourceDb2.PalletData));
+        private IEnumerable<byte> CommonData => SourceDb2.CommonData ?? throw new ArgumentNullException(nameof(SourceDb2.CommonData));
+
+        public Db2 SourceDb2 => _db2;
+
+        public Db2Definition SourceDbd => _dbd;
 
         private IEnumerable<byte> RecordData
         {

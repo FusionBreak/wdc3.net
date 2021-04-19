@@ -436,3 +436,5 @@ $RECYCLE.BIN/
 coverage-hits/*
 coverage-html/*
 coverage.json
+
+wdc3.net.test/TestOutputFiles/*
