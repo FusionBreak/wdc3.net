@@ -84,19 +84,34 @@ namespace wdc3.net
             return output;
         }
 
-        private IEnumerable<IEnumerable<Db2Cell>> ReadRows()
+        private IEnumerable<Db2Row> ReadRows()
         {
             foreach(var rowInfo in _rowInfos)
             {
-                var row = new List<Db2Cell>() { CreateCellForId(rowInfo.Id) };
-                row.AddRange(ReadCells(rowInfo).Select(cell => cell));
-                yield return row;
+                yield return new Db2Row(ReadCells(rowInfo).ToArray(), FindSectionHeaderForRow(rowInfo.Id), rowInfo);
                 _valueExtractor.NextRow(rowInfo);
             }
         }
 
+        private SectionHeader FindSectionHeaderForRow(uint RowId)
+        {
+            //var sectionIndex = Sections.TakeWhile(section => section.IdList?.Contains(RowId) ?? throw new NullReferenceException(nameof(ISection.IdList))).Count();
+            //return _db2.SectionHeaders?.ElementAt(sectionIndex) ?? throw new NullReferenceException(nameof(Db2.SectionHeaders));
+
+            for(int sectionIndex = 0; sectionIndex < Sections.Count(); sectionIndex++)
+            {
+                if(Sections.Skip(sectionIndex).First().IdList?.Contains(RowId) ?? throw new NullReferenceException(nameof(ISection.IdList)))
+                {
+                    return _db2.SectionHeaders?.ElementAt(sectionIndex) ?? throw new NullReferenceException(nameof(Db2.SectionHeaders));
+                }
+            }
+            throw new Exception();
+        }
+
         private IEnumerable<Db2Cell> ReadCells(RowInfo rowInfo)
         {
+            yield return CreateCellForId(rowInfo.Id);
+
             foreach(var columnInfo in _columnInfos)
             {
                 if(!columnInfo.IsId)

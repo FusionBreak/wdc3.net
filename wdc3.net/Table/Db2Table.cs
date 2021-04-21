@@ -38,49 +38,19 @@ namespace wdc3.net.Table
 
         public int ColumnCount => _columns.Count;
 
-        public void AddRow(IEnumerable<Db2Cell> cells) => _rows.Add(cells);
+        public void AddRow(Db2Row row) => _rows.Add(row);
 
-        public void AddRows(IEnumerable<IEnumerable<Db2Cell>> rows)
-        {
-            foreach(var row in rows)
-                AddRow(row);
-        }
+        public void AddRows(IEnumerable<Db2Row> rows) => _rows.AddRange(rows);
 
-        public IEnumerable<IEnumerable<object?>> Values
-        {
-            get
-            {
-                foreach(var row in _rows)
-                {
-                    yield return GetRowValues(row);
-                }
-            }
-        }
+        public IEnumerable<IEnumerable<object?>> Values => _rows.Select(row => GetRowValues(row));
 
-        private IEnumerable<object?> GetRowValues(IEnumerable<Db2Cell> row)
-        {
-            foreach(var column in _columns)
-            {
-                yield return row.First(cell => cell.ColumnName == column.Key).Value;
-            }
-        }
+        private IEnumerable<object?> GetRowValues(Db2Row row) => row.Cells.Select(cell => cell.Value);
 
-        public object?[][] ValuesAsArray
-        {
-            get
-            {
-                var output = new List<object?[]>();
+        public object?[][] ValuesAsArray => _rows.Select(row => GetRowValues(row).ToArray()).ToArray();
 
-                foreach(var row in _rows)
-                    output.Add(GetRowValuesAsArray(row));
+        private object?[] GetRowValuesAsArray(Db2Row row) => GetRowValues(row).ToArray();
 
-                return output.ToArray();
-            }
-        }
-
-        private object?[] GetRowValuesAsArray(IEnumerable<Db2Cell> row) => GetRowValues(row).ToArray();
-
-        private readonly List<IEnumerable<Db2Cell>> _rows = new();
+        private readonly List<Db2Row> _rows = new();
         private readonly Dictionary<string, Db2ValueTypes> _columns = new();
     }
 }
