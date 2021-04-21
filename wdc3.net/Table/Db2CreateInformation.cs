@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using wdc3.net.File;
 
 namespace wdc3.net.Table
 {
@@ -13,5 +14,8 @@ namespace wdc3.net.Table
         public uint LayoutHash { get; set; }
         public uint Locale { get; set; }
         public ushort Flags { get; set; }
+
+        public IEnumerable<FieldStructure>? FieldStructures { get; set; }
+        public IEnumerable<IFieldStorageInfo>? FieldStorageInfos { get; set; }
     }
 }

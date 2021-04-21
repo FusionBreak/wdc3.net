@@ -28,10 +28,12 @@ namespace wdc3.net
             var db2 = new Db2()
             {
                 Header = GetHeader(),
-                //SectionHeaders = new List<SectionHeader>(),
-                //FieldStructures = new List<FieldStructure>(),
-                //FieldStorageInfos = new List<FieldStorageInfoCommonData>(),
-                //Sections = new List<Section>()
+                SectionHeaders = DetermineAllSectionHeaders(),
+                FieldStructures = _createInformation.FieldStructures,
+                FieldStorageInfos = _createInformation.FieldStorageInfos,
+                Sections = new List<Section>(),
+                CommonData = null,
+                PalletData = null,
             };
 
             new Db2Writer().WriteFile(db2, path);
@@ -43,8 +45,19 @@ namespace wdc3.net
             {
                 Magic = _createInformation.Magic,
                 RecordCount = (uint)_table.Values.Count(),
-                FieldCount = (uint)_table.ColumnCount
+                FieldCount = (uint)_table.ColumnCount,
+
+                TableHash = _createInformation.TableHash,
+                MinId = _table.Rows.OrderBy(row => row.Id).First().Id,
+                MaxId = _table.Rows.OrderBy(row => row.Id).Last().Id,
+                Locale = _createInformation.Locale,
+                Flags = _createInformation.Flags,
+                TotalFieldCount = (uint)_table.ColumnCount,
+
+                SectionCount = (uint)DetermineAllSectionHeaders().Count(),
             };
         }
+
+        private IEnumerable<SectionHeader> DetermineAllSectionHeaders() => _table.Rows.Select(row => row.DependentSectionHeader).Distinct();
     }
 }

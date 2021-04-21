@@ -48,6 +48,8 @@ namespace wdc3.net.Table
 
         public object?[][] ValuesAsArray => _rows.Select(row => GetRowValues(row).ToArray()).ToArray();
 
+        public List<Db2Row> Rows => _rows;
+
         private object?[] GetRowValuesAsArray(Db2Row row) => GetRowValues(row).ToArray();
 
         private readonly List<Db2Row> _rows = new();
