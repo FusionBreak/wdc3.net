@@ -116,17 +116,27 @@ namespace wdc3.net
             {
                 if(!columnInfo.IsId)
                 {
-                    yield return new Db2Cell() { ColumnName = columnInfo.Name, Value = ReadValue(rowInfo, columnInfo) };
+                    yield return ReadValue(rowInfo, columnInfo);
                 }
             }
         }
 
-        private Db2Cell CreateCellForId(uint id) => new Db2Cell() { ColumnName = _columnInfos.Where(col => col.IsId).First().Name, Value = id };
+        private Db2Cell CreateCellForId(uint id) => new Db2Cell()
+        {
+            ColumnInfo = _columnInfos.Where(col => col.IsId).First(),
+            Value = id
+        };
 
-        private object ReadValue(RowInfo rowInfo, ColumnInfo columnInfo)
+        private Db2Cell ReadValue(RowInfo rowInfo, ColumnInfo columnInfo)
         {
             var (_, structure, storageInfo) = GetColumnReadInfos().Where(readInfo => readInfo.Info == columnInfo).First();
-            return _valueExtractor.ExtractValue(structure, storageInfo, columnInfo, rowInfo);
+            return new Db2Cell()
+            {
+                Value = _valueExtractor.ExtractValue(structure, storageInfo, columnInfo, rowInfo),
+                ColumnInfo = columnInfo,
+                FieldStorageInfo = storageInfo,
+                FieldStructure = structure
+            };
         }
 
         private IEnumerable<uint> ReadOffsetMapIds()

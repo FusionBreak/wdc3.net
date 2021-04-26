@@ -24,7 +24,7 @@ namespace wdc3.net.Table
             try
             {
                 var output = columnInfo.ArrayLength > 0
-                ? JsonSerializer.Serialize(ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray())
+                ? ExtractMany(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset, columnInfo.ArrayLength).ToArray()
                 : ExtractSingle(columnInfo.Type, columnInfo.Size, columnInfo.IsSigned, valueOffset);
 
                 if(output is string text && columnInfo.Type == Db2ValueTypes.Text)

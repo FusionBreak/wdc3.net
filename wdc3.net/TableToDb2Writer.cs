@@ -15,6 +15,7 @@ namespace wdc3.net
         private Db2Table _table;
         private readonly Db2Definition _dbd;
         private readonly Db2CreateInformation _createInformation;
+        private readonly Db2ValueInserterNoOffsetFlag _insterter = new Db2ValueInserterNoOffsetFlag();
 
         public TableToDb2Writer(Db2Table table, string dbdPath, Db2CreateInformation createInformation)
         {
@@ -25,15 +26,17 @@ namespace wdc3.net
 
         public void Write(string path)
         {
+            var (palletData, commonData, sections) = GetData();
+
             var db2 = new Db2()
             {
                 Header = GetHeader(),
                 SectionHeaders = DetermineAllSectionHeaders(),
                 FieldStructures = _createInformation.FieldStructures,
                 FieldStorageInfos = _createInformation.FieldStorageInfos,
-                Sections = new List<Section>(),
-                CommonData = null,
-                PalletData = null,
+                Sections = sections,
+                CommonData = commonData,
+                PalletData = palletData,
             };
 
             new Db2Writer().WriteFile(db2, path);
@@ -48,6 +51,7 @@ namespace wdc3.net
                 FieldCount = (uint)_table.ColumnCount,
 
                 TableHash = _createInformation.TableHash,
+                LayoutHash = _createInformation.LayoutHash,
                 MinId = _table.Rows.OrderBy(row => row.Id).First().Id,
                 MaxId = _table.Rows.OrderBy(row => row.Id).Last().Id,
                 Locale = _createInformation.Locale,
@@ -59,5 +63,15 @@ namespace wdc3.net
         }
 
         private IEnumerable<SectionHeader> DetermineAllSectionHeaders() => _table.Rows.Select(row => row.DependentSectionHeader).Distinct();
+
+        private (IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<ISection> sections) GetData()
+        {
+            foreach(var row in _table.Rows)
+            {
+                _insterter.ProcessRow(row);
+            }
+
+            return (new List<byte>(), new List<byte>(), new List<ISection>());
+        }
     }
 }

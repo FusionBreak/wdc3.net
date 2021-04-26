@@ -66,7 +66,7 @@ namespace wdc3.net.Table
                             output.Add(ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
                         }
 
-                        return JsonSerializer.Serialize(output);
+                        return output;
                     }
                     else
                     {
@@ -107,7 +107,7 @@ namespace wdc3.net.Table
 
                     _additionalDataOffset += fieldStorageInfo.AdditionalDataSize;
 
-                    return JsonSerializer.Serialize(output2);
+                    return output2;
 
                 default:
                     return fieldStorageInfo.StorageType;
