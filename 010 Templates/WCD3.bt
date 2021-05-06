@@ -180,7 +180,7 @@ struct {
     FieldStructure fieldStructure[header.total_field_count];
     FieldStorageInfos field_infos( header.field_storage_info_size / 24 );
 
-    byte pallet_data[header.pallet_data_size];
+    int pallet_data[header.pallet_data_size / 4];
     
     if(header.common_data_size > 0)
     {
