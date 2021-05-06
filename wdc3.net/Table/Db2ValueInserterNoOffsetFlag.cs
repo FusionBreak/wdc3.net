@@ -22,8 +22,17 @@ namespace wdc3.net.Table
 
         private List<BitArray> _currentSectionData = new();
 
+        public int?[] PalletValues = new int?[1000];
+        private uint _currentRow = 0;
+
+        public IEnumerable<int?> Foo => PalletValues.Where(value => value != null);
+
+        //private uint _additionalDataOffset = 0;
+
         public void ProcessRow(Db2Row row)
         {
+            uint _additionalDataOffset = 0;
+
             foreach(var cell in row.Cells)
             {
                 switch(cell.FieldStorageInfo?.StorageType)
@@ -56,12 +65,23 @@ namespace wdc3.net.Table
                         break;
 
                     case FieldCompressions.BitpackedIndexed:
+                        var offset = _additionalDataOffset / 4;
+                        var index = AddPalletValue((int)(cell.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value))), offset);
+                        _additionalDataOffset += cell.FieldStorageInfo.AdditionalDataSize;
                         break;
 
                     case FieldCompressions.BitpackedIndexedArray:
+                        var offset_array = _additionalDataOffset / 4;
+                        var values = (cell.Value as List<object> ?? throw new NullReferenceException(nameof(Db2Cell.Value))).Select(value => (int)value);
+
+                        var index_array = AddPalletArray(values.ToArray(), offset_array);
+
+                        _additionalDataOffset += cell.FieldStorageInfo.AdditionalDataSize;
                         break;
                 }
             }
+
+            _currentRow++;
         }
 
         private void WriteNumber(int value, int size)
@@ -94,6 +114,41 @@ namespace wdc3.net.Table
                 output.Add(false);
 
             return output.ToArray();
+        }
+
+        private int AddPalletValue(int value, uint index)
+        {
+            if(PalletValues[index] != null && PalletValues[index] != value)
+            {
+                AddPalletValue(value, index + 1);
+            }
+            else
+            {
+                PalletValues[index] = value;
+            }
+
+            return Array.IndexOf(PalletValues, value) - (int)index;
+        }
+
+        private int AddPalletArray(int[] values, uint index)
+        {
+            if(values.Length > 1 && PalletValues[index + values.Length - 1] == values[0])
+            {
+                AddPalletArray(values.Skip(1).ToArray(), index + 1);
+            }
+            else if(PalletValues[index] != null && PalletValues[index] != values[0])
+            {
+                AddPalletArray(values, index + 1);
+            }
+            else
+            {
+                for(int i = 0; i < values.Length; i++)
+                {
+                    PalletValues[index + i] = values[i];
+                }
+            }
+
+            return Array.IndexOf(PalletValues, values[0]) - (int)index;
         }
     }
 }

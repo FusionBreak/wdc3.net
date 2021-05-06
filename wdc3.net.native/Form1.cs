@@ -8,7 +8,7 @@ namespace wdc3.net.native
         {
             InitializeComponent();
 
-            const string db = "ItemSparse";
+            const string db = "Map";
             var reader = new Db2ToTableReader(@$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db.ToLower()}.db2", @$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db}.dbd");
             var table = reader.Read();
 
