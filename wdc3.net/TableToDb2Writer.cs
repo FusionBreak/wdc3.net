@@ -22,21 +22,22 @@ namespace wdc3.net
             _table = table;
             _dbd = new DbdReader().ReadFile(dbdPath);
             _createInformation = createInformation;
+
+            foreach(var row in _table.Rows)
+                _insterter.ProcessRow(row);
         }
 
         public void Write(string path)
         {
-            var (palletData, commonData, sections) = GetData();
-
             var db2 = new Db2()
             {
                 Header = GetHeader(),
                 SectionHeaders = DetermineAllSectionHeaders(),
                 FieldStructures = _createInformation.FieldStructures,
                 FieldStorageInfos = _createInformation.FieldStorageInfos,
-                Sections = sections,
-                CommonData = commonData,
-                PalletData = palletData,
+                Sections = new List<Section>(),
+                CommonData = new List<byte>(),
+                PalletData = _insterter.PalletData,
             };
 
             new Db2Writer().WriteFile(db2, path);
@@ -58,20 +59,11 @@ namespace wdc3.net
                 Flags = _createInformation.Flags,
                 TotalFieldCount = (uint)_table.ColumnCount,
 
+                PalletDataSize = (uint)_insterter.PalletData.Count(),
                 SectionCount = (uint)DetermineAllSectionHeaders().Count(),
             };
         }
 
         private IEnumerable<SectionHeader> DetermineAllSectionHeaders() => _table.Rows.Select(row => row.DependentSectionHeader).Distinct();
-
-        private (IEnumerable<byte> palletData, IEnumerable<byte> commonData, IEnumerable<ISection> sections) GetData()
-        {
-            foreach(var row in _table.Rows)
-            {
-                _insterter.ProcessRow(row);
-            }
-
-            return (new List<byte>(), new List<byte>(), new List<ISection>());
-        }
     }
 }

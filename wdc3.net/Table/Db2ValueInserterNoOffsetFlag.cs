@@ -15,6 +15,7 @@ namespace wdc3.net.Table
         private readonly byte[] _palletData;
         private readonly byte[] _commonData;
         public IEnumerable<byte> RecordData => ConvertSectionData();
+        public IEnumerable<byte> PalletData => PalletValues.Where(value => value != null).SelectMany(data => BitConverter.GetBytes(data ?? 0));
 
         private Dictionary<SectionHeader, Section> _sections = new();
         private List<byte> _currentSectionStringData;
@@ -23,7 +24,6 @@ namespace wdc3.net.Table
         private List<BitArray> _currentSectionData = new();
 
         public int?[] PalletValues = new int?[1000];
-        private uint _currentRow = 0;
 
         public IEnumerable<int?> Foo => PalletValues.Where(value => value != null);
 
@@ -61,27 +61,22 @@ namespace wdc3.net.Table
                         WriteNumber((int)(cell.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value))), cell.FieldStorageInfo.FieldSizeBits);
                         break;
 
-                    case FieldCompressions.CommonData:
-                        break;
-
                     case FieldCompressions.BitpackedIndexed:
                         var offset = _additionalDataOffset / 4;
-                        var index = AddPalletValue((int)(cell.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value))), offset);
+                        var palletIndex = AddPalletValue((int)(cell.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value))), offset);
                         _additionalDataOffset += cell.FieldStorageInfo.AdditionalDataSize;
+                        WriteNumber(palletIndex, cell.FieldStorageInfo.FieldSizeBits);
                         break;
 
                     case FieldCompressions.BitpackedIndexedArray:
                         var offset_array = _additionalDataOffset / 4;
                         var values = (cell.Value as List<object> ?? throw new NullReferenceException(nameof(Db2Cell.Value))).Select(value => (int)value);
-
-                        var index_array = AddPalletArray(values.ToArray(), offset_array);
-
+                        var palletIndex_array = AddPalletArray(values.ToArray(), offset_array);
                         _additionalDataOffset += cell.FieldStorageInfo.AdditionalDataSize;
+                        WriteNumber(palletIndex_array, cell.FieldStorageInfo.FieldSizeBits);
                         break;
                 }
             }
-
-            _currentRow++;
         }
 
         private void WriteNumber(int value, int size)
@@ -132,11 +127,7 @@ namespace wdc3.net.Table
 
         private int AddPalletArray(int[] values, uint index)
         {
-            if(values.Length > 1 && PalletValues[index + values.Length - 1] == values[0])
-            {
-                AddPalletArray(values.Skip(1).ToArray(), index + 1);
-            }
-            else if(PalletValues[index] != null && PalletValues[index] != values[0])
+            if(CheckAllValuesFromArray(values, index).Contains(false))
             {
                 AddPalletArray(values, index + 1);
             }
@@ -149,6 +140,14 @@ namespace wdc3.net.Table
             }
 
             return Array.IndexOf(PalletValues, values[0]) - (int)index;
+        }
+
+        private IEnumerable<bool> CheckAllValuesFromArray(int[] values, uint index)
+        {
+            for(int i = 0; i < values.Length; i++)
+            {
+                yield return PalletValues[index + i] == null || PalletValues[index + i] == values[i];
+            }
         }
     }
 }
