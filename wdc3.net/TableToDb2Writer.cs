@@ -15,11 +15,16 @@ namespace wdc3.net
         private Db2Table _table;
         private readonly Db2Definition _dbd;
         private readonly Db2CreateInformation _createInformation;
-        private readonly Db2ValueInserterNoOffsetFlag _insterter = new Db2ValueInserterNoOffsetFlag();
+        private readonly Db2ValueInserterNoOffsetFlag _insterter;
+
+        private decimal RecordSize => Math.Ceiling((decimal)(_table.Rows.First().Cells?.Select(cell => cell.FieldStorageInfo?.FieldSizeBits).Sum(x => x) ?? 0) / 8);
+        private int RecordCount => _table.Values.Count();
+        private decimal RecordDataSize => RecordSize * RecordCount;
 
         public TableToDb2Writer(Db2Table table, string dbdPath, Db2CreateInformation createInformation)
         {
             _table = table;
+            _insterter = new Db2ValueInserterNoOffsetFlag(RecordDataSize);
             _dbd = new DbdReader().ReadFile(dbdPath);
             _createInformation = createInformation;
 
@@ -48,9 +53,9 @@ namespace wdc3.net
             return new Header()
             {
                 Magic = _createInformation.Magic,
-                RecordCount = (uint)_table.Values.Count(),
+                RecordCount = (uint)RecordCount,
                 FieldCount = (uint)_table.ColumnCount,
-
+                RecordSize = (uint)RecordSize,
                 TableHash = _createInformation.TableHash,
                 LayoutHash = _createInformation.LayoutHash,
                 MinId = _table.Rows.OrderBy(row => row.Id).First().Id,
