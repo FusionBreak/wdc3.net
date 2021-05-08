@@ -40,6 +40,13 @@ namespace wdc3.net.Table
                     case FieldCompressions.None:
                         if(cell.ColumnInfo?.ArrayLength > 0)
                         {
+                            var size = cell.FieldStorageInfo.FieldSizeBits / cell.ColumnInfo.ArrayLength;
+                            var arrayValues = ((List<object>)(cell?.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value)))).Select(value => (int)value).ToArray();
+
+                            for(int i = 0; i < arrayValues.Length; i++)
+                            {
+                                WriteNumber(arrayValues[i], size);
+                            }
                         }
                         else
                         {
