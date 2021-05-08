@@ -113,23 +113,25 @@ namespace wdc3.net.Table
 
         private int AddPalletValue(int value, uint index)
         {
+            var output = (int)index;
             if(PalletValues[index] != null && PalletValues[index] != value)
             {
-                AddPalletValue(value, index + 1);
+                output = AddPalletValue(value, index + 1);
             }
             else
             {
                 PalletValues[index] = value;
             }
 
-            return Array.IndexOf(PalletValues, value) - (int)index;
+            return output;
         }
 
         private int AddPalletArray(int[] values, uint index)
         {
+            var output = (int)index;
             if(CheckAllValuesFromArray(values, index).Contains(false))
             {
-                AddPalletArray(values, index + 1);
+                output = AddPalletArray(values, index + 1);
             }
             else
             {
@@ -139,14 +141,14 @@ namespace wdc3.net.Table
                 }
             }
 
-            return Array.IndexOf(PalletValues, values[0]) - (int)index;
-        }
+            return output;
 
-        private IEnumerable<bool> CheckAllValuesFromArray(int[] values, uint index)
-        {
-            for(int i = 0; i < values.Length; i++)
+            IEnumerable<bool> CheckAllValuesFromArray(int[] values, uint index)
             {
-                yield return PalletValues[index + i] == null || PalletValues[index + i] == values[i];
+                for(int i = 0; i < values.Length; i++)
+                {
+                    yield return PalletValues[index + i] == null || PalletValues[index + i] == values[i];
+                }
             }
         }
     }
