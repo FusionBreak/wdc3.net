@@ -20,6 +20,8 @@ namespace wdc3.net.Table
                 Flags = db2.Header?.Flags ?? throw new NullReferenceException(nameof(Db2.Header)),
                 FieldStorageInfos = db2.FieldStorageInfos,
                 FieldStorageInfoSize = db2.Header?.FieldStorageInfoSize ?? throw new NullReferenceException(nameof(Db2.Header)),
+                BitpackedDataOffset = db2.Header?.BitpackedDataOffset ?? throw new NullReferenceException(nameof(Db2.Header)),
+                LookUpColumnCount = db2.Header?.LookUpColumnCount ?? throw new NullReferenceException(nameof(Db2.Header)),
                 FieldStructures = db2.FieldStructures
             };
         }

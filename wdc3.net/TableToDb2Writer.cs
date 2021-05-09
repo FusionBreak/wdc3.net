@@ -56,7 +56,7 @@ namespace wdc3.net
             {
                 Magic = _createInformation.Magic,
                 RecordCount = (uint)RecordCount,
-                FieldCount = (uint)_table.ColumnCount,
+                FieldCount = (uint)_table.ColumnCount - 1,
                 RecordSize = (uint)RecordSize,
                 StringTableSize = (uint)(_insterter.Sections.Select(section => section?.StringData?.Count()).Sum() ?? 0),
                 TableHash = _createInformation.TableHash,
@@ -66,8 +66,9 @@ namespace wdc3.net
                 Locale = _createInformation.Locale,
                 Flags = _createInformation.Flags,
                 IdIndex = (ushort)Array.IndexOf(columnInfos, columnInfos.First(info => info?.IsId ?? false)),
-                TotalFieldCount = (uint)_table.ColumnCount,
-
+                TotalFieldCount = (uint)_table.ColumnCount - 1,
+                BitpackedDataOffset = _createInformation.BitpackedDataOffset,
+                LookUpColumnCount = _createInformation.LookUpColumnCount,
                 FieldStorageInfoSize = _createInformation.FieldStorageInfoSize,
                 CommonDataSize = (uint)_insterter.CommonData.Count(),
                 PalletDataSize = (uint)_insterter.PalletData.Count(),
