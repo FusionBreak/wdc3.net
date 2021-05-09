@@ -19,6 +19,7 @@ namespace wdc3.net.Table
                 Locale = db2.Header?.Locale ?? throw new NullReferenceException(nameof(Db2.Header)),
                 Flags = db2.Header?.Flags ?? throw new NullReferenceException(nameof(Db2.Header)),
                 FieldStorageInfos = db2.FieldStorageInfos,
+                FieldStorageInfoSize = db2.Header?.FieldStorageInfoSize ?? throw new NullReferenceException(nameof(Db2.Header)),
                 FieldStructures = db2.FieldStructures
             };
         }

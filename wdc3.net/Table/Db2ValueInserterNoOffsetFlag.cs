@@ -18,6 +18,9 @@ namespace wdc3.net.Table
         private readonly byte[] _palletData;
         private readonly byte[] _commonData;
         public IEnumerable<byte> PalletData => PalletValues.Where(value => value != null).SelectMany(data => BitConverter.GetBytes(data ?? 0));
+        public IEnumerable<byte> CommonData => new List<byte>();
+
+        public IEnumerable<Section> Sections => _sections.Values;
 
         private Section CurrentSection => _sections[_tactKeyHash];
         private ulong _tactKeyHash;

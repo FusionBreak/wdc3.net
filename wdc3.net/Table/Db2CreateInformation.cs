@@ -14,6 +14,7 @@ namespace wdc3.net.Table
         public uint LayoutHash { get; set; }
         public uint Locale { get; set; }
         public ushort Flags { get; set; }
+        public uint FieldStorageInfoSize { get; set; }
 
         public IEnumerable<FieldStructure>? FieldStructures { get; set; }
         public IEnumerable<IFieldStorageInfo>? FieldStorageInfos { get; set; }

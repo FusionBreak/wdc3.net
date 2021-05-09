@@ -40,7 +40,7 @@ namespace wdc3.net
                 SectionHeaders = DetermineAllSectionHeaders(),
                 FieldStructures = _createInformation.FieldStructures,
                 FieldStorageInfos = _createInformation.FieldStorageInfos,
-                Sections = new List<Section>(),
+                Sections = _insterter.Sections,
                 CommonData = new List<byte>(),
                 PalletData = _insterter.PalletData,
             };
@@ -50,20 +50,26 @@ namespace wdc3.net
 
         private Header GetHeader()
         {
+            var columnInfos = _table.Rows.First().Cells.Select(cell => cell.ColumnInfo).ToArray();
+
             return new Header()
             {
                 Magic = _createInformation.Magic,
                 RecordCount = (uint)RecordCount,
                 FieldCount = (uint)_table.ColumnCount,
                 RecordSize = (uint)RecordSize,
+                StringTableSize = (uint)(_insterter.Sections.Select(section => section?.StringData?.Count()).Sum() ?? 0),
                 TableHash = _createInformation.TableHash,
                 LayoutHash = _createInformation.LayoutHash,
                 MinId = _table.Rows.OrderBy(row => row.Id).First().Id,
                 MaxId = _table.Rows.OrderBy(row => row.Id).Last().Id,
                 Locale = _createInformation.Locale,
                 Flags = _createInformation.Flags,
+                IdIndex = (ushort)Array.IndexOf(columnInfos, columnInfos.First(info => info?.IsId ?? false)),
                 TotalFieldCount = (uint)_table.ColumnCount,
 
+                FieldStorageInfoSize = _createInformation.FieldStorageInfoSize,
+                CommonDataSize = (uint)_insterter.CommonData.Count(),
                 PalletDataSize = (uint)_insterter.PalletData.Count(),
                 SectionCount = (uint)DetermineAllSectionHeaders().Count(),
             };
