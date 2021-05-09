@@ -24,7 +24,7 @@ namespace wdc3.net
         public TableToDb2Writer(Db2Table table, string dbdPath, Db2CreateInformation createInformation)
         {
             _table = table;
-            _insterter = new Db2ValueInserterNoOffsetFlag(RecordDataSize);
+            _insterter = new Db2ValueInserterNoOffsetFlag(RecordDataSize, RecordSize);
             _dbd = new DbdReader().ReadFile(dbdPath);
             _createInformation = createInformation;
 
