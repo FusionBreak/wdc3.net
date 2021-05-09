@@ -12,25 +12,35 @@ namespace wdc3.net.Table
 {
     public class Db2ValueInserterNoOffsetFlag
     {
+        private decimal _recordDataSize;
+        private decimal _recordSize;
+
         private readonly byte[] _palletData;
         private readonly byte[] _commonData;
-        public IEnumerable<byte> RecordData => ConvertSectionData();
         public IEnumerable<byte> PalletData => PalletValues.Where(value => value != null).SelectMany(data => BitConverter.GetBytes(data ?? 0));
 
-        private Dictionary<SectionHeader, Section> _sections = new();
-        private List<byte> _currentSectionStringData;
-        private List<uint> _currentIdList;
+        private Section CurrentSection => _sections[_tactKeyHash];
+        private ulong _tactKeyHash;
+        private Dictionary<ulong, Section> _sections = new();
 
+        private List<uint> _currentIdList = new();
         private List<BitArray> _currentSectionData = new();
+        private List<string> _currentSectionStrings = new() { " " };
 
         public int?[] PalletValues = new int?[1000];
 
-        public IEnumerable<int?> Foo => PalletValues.Where(value => value != null);
+        public Db2ValueInserterNoOffsetFlag(decimal recordDataSize, decimal recordSize)
+        {
+            _recordDataSize = recordDataSize;
+            _recordSize = recordSize;
+        }
 
-        //private uint _additionalDataOffset = 0;
+        public IEnumerable<int?> Foo => PalletValues.Where(value => value != null);
 
         public void ProcessRow(Db2Row row)
         {
+            UpdateSection(row.DependentSectionHeader);
+
             uint _additionalDataOffset = 0;
 
             foreach(var cell in row.Cells)
@@ -52,9 +62,8 @@ namespace wdc3.net.Table
                         {
                             if(cell.ColumnInfo?.Type == Db2ValueTypes.Text)
                             {
-                                //var stringOffset = value + fieldStructure.Position + (_recordSize * _currentRow);
-
-                                //return ReadString(stringOffset);
+                                var stringOffset = AddString((string)(cell.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value)))) - cell.FieldStructure?.Position ?? throw new NullReferenceException(nameof(Db2Cell.FieldStructure));
+                                WriteNumber(stringOffset, cell.FieldStorageInfo.FieldSizeBits);
                             }
                             else
                             {
@@ -84,6 +93,34 @@ namespace wdc3.net.Table
                         break;
                 }
             }
+
+            _currentIdList.Add(row.Id);
+        }
+
+        private void UpdateSection(SectionHeader sectionHeader)
+        {
+            if(!_sections.ContainsKey(sectionHeader.TactKeyHash))
+                _sections.Add(sectionHeader.TactKeyHash, new Section()
+                {
+                    Records = new List<RecordData>(),
+                    StringData = new List<byte>(),
+                    IdList = new List<uint>(),
+                    CopyTable = new List<CopyTableEntry>(),
+                    OffsetMap = new List<OffsetMapEntry>(),
+                    RelationshipMap = null,
+                    OffsetMapIdList = new List<uint>()
+                });
+
+            if(_tactKeyHash != sectionHeader.TactKeyHash)
+            {
+                InsertDataToSection();
+                _tactKeyHash = sectionHeader.TactKeyHash;
+            }
+        }
+
+        private void InsertDataToSection()
+        {
+            CurrentSection.Records = ConvertSectionData().ToArray();
         }
 
         private void WriteNumber(int value, int size)
@@ -97,7 +134,7 @@ namespace wdc3.net.Table
             _currentSectionData.Add(new BitArray(bools.ToArray()));
         }
 
-        private byte[] ConvertSectionData()
+        private IEnumerable<RecordData> ConvertSectionData()
         {
             var boolArrays = FillBoolArray(_currentSectionData.Select(bitArray => bitArray.Cast<bool>()).SelectMany(x => x));
             var bits = new BitArray(boolArrays);
@@ -105,7 +142,15 @@ namespace wdc3.net.Table
             var output = new byte[bits.Length / 8];
             bits.CopyTo(output, 0);
 
-            return output;
+            for(int i = 0; i < output.Length; i += (int)_recordSize)
+            {
+                var data = output.Skip(i).Take((int)_recordSize).ToArray();
+
+                //if(data.Length < _recordSize)
+                //    throw new Exception($"RecordData is too small. Size is {data.Length} but it must have the size {_recordSize}");
+
+                yield return new RecordData() { Data = data };
+            }
         }
 
         private bool[] FillBoolArray(IEnumerable<bool> bools)
@@ -157,6 +202,18 @@ namespace wdc3.net.Table
                     yield return PalletValues[index + i] == null || PalletValues[index + i] == values[i];
                 }
             }
+        }
+
+        private int AddString(string value)
+        {
+            value = value == "" ? " " : value;
+
+            if(!_currentSectionStrings.Contains(value))
+                _currentSectionStrings.Add(value);
+
+            var offset = _currentSectionStrings.Take(_currentSectionStrings.IndexOf(value)).Select(s => s.Length + 1).Sum();
+
+            return (int)_recordDataSize + offset;
         }
     }
 }
