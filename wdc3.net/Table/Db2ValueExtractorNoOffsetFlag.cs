@@ -45,7 +45,7 @@ namespace wdc3.net.Table
             _recordStringData = recordStringData.ToArray() ?? throw new ArgumentNullException(nameof(recordStringData));
             _recordDataCombined = _recordData.Concat(_recordStringData).ToArray();
 
-            _rowBitSize = FillBitSizeToByte(rowBitSize);
+            _rowBitSize = recordSize * 8;
             _recordDataAsBits = new BitArray(recordData.ToArray());
             _recordSize = recordSize;
         }
@@ -141,16 +141,6 @@ namespace wdc3.net.Table
                         .ToArray();
 
             return new string(chars);
-        }
-
-        private int FillBitSizeToByte(int offset)
-        {
-            while(offset % 8 != 0)
-            {
-                offset++;
-            }
-
-            return offset;
         }
 
         public void NextRow(RowInfo rowInfo)
