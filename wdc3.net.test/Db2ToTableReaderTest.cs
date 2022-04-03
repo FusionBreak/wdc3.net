@@ -70,7 +70,6 @@ namespace wdc3.net.test
         {
             var reader = new Db2ToTableReader(TestFiles.ITEM_SPARSE_DB2_PATH, TestFiles.ITEM_SPARSE_DBD_PATH);
             var table = reader.Read();
-            var x = table.ValuesAsJson.ToArray();
             var readed = string.Join(", ", table.ValuesAsJson.Skip(line).First());
             var expected = string.Join(", ", expectedValues.Select(value => value.ToString()).ToArray());
 
