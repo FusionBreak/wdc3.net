@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.Json;
 using wdc3.net.Enums;
 
 namespace wdc3.net.Table
@@ -43,6 +44,10 @@ namespace wdc3.net.Table
         public void AddRows(IEnumerable<Db2Row> rows) => _rows.AddRange(rows);
 
         public IEnumerable<IEnumerable<object?>> Values => _rows.Select(row => GetRowValues(row));
+
+        public IEnumerable<IEnumerable<string>> ValuesAsJson => Values.Select(row => RowToJson(row));
+
+        private IEnumerable<string> RowToJson(IEnumerable<object?>? row) => row?.Select(value => JsonSerializer.Serialize(value)) ?? new string[0];
 
         private IEnumerable<object?> GetRowValues(Db2Row row) => row.Cells.Select(cell => cell.Value);
 
