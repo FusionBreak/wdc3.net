@@ -15,7 +15,7 @@ namespace wdc3.net
         private Db2Table _table;
         private readonly Db2Definition _dbd;
         private readonly Db2CreateInformation _createInformation;
-        private readonly Db2ValueInserterNoOffsetFlag _insterter;
+        private readonly Db2ValueInserterNoOffsetFlag _inserter;
 
         private decimal RecordSize => Math.Ceiling((decimal)(_table.Rows.First().Cells?.Select(cell => cell.FieldStorageInfo?.FieldSizeBits).Sum(x => x) ?? 0) / 8);
         private int RecordCount => _table.Values.Count();
@@ -24,12 +24,12 @@ namespace wdc3.net
         public TableToDb2Writer(Db2Table table, string dbdPath, Db2CreateInformation createInformation)
         {
             _table = table;
-            _insterter = new Db2ValueInserterNoOffsetFlag(RecordDataSize, RecordSize);
+            _inserter = new Db2ValueInserterNoOffsetFlag(RecordDataSize, RecordSize);
             _dbd = new DbdReader().ReadFile(dbdPath);
             _createInformation = createInformation;
 
             foreach(var row in _table.Rows)
-                _insterter.ProcessRow(row);
+                _inserter.ProcessRow(row);
         }
 
         public void Write(string path)
@@ -40,9 +40,9 @@ namespace wdc3.net
                 SectionHeaders = DetermineAllSectionHeaders(),
                 FieldStructures = _createInformation.FieldStructures,
                 FieldStorageInfos = _createInformation.FieldStorageInfos,
-                Sections = _insterter.Sections,
+                Sections = _inserter.Sections,
                 CommonData = new List<byte>(),
-                PalletData = _insterter.PalletData,
+                PalletData = _inserter.PalletData,
             };
 
             new Db2Writer().WriteFile(db2, path);
@@ -58,7 +58,7 @@ namespace wdc3.net
                 RecordCount = (uint)RecordCount,
                 FieldCount = (uint)_table.ColumnCount - 1,
                 RecordSize = (uint)RecordSize,
-                StringTableSize = (uint)(_insterter.Sections.Select(section => section?.StringData?.Count()).Sum() ?? 0),
+                StringTableSize = (uint)(_inserter.Sections.Select(section => section?.StringData?.Count()).Sum() ?? 0),
                 TableHash = _createInformation.TableHash,
                 LayoutHash = _createInformation.LayoutHash,
                 MinId = _table.Rows.OrderBy(row => row.Id).First().Id,
@@ -70,8 +70,8 @@ namespace wdc3.net
                 BitpackedDataOffset = _createInformation.BitpackedDataOffset,
                 LookUpColumnCount = _createInformation.LookUpColumnCount,
                 FieldStorageInfoSize = _createInformation.FieldStorageInfoSize,
-                CommonDataSize = (uint)_insterter.CommonData.Count(),
-                PalletDataSize = (uint)_insterter.PalletData.Count(),
+                CommonDataSize = (uint)_inserter.CommonData.Count(),
+                PalletDataSize = (uint)_inserter.PalletData.Count(),
                 SectionCount = (uint)DetermineAllSectionHeaders().Count(),
             };
         }
