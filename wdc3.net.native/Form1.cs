@@ -9,7 +9,7 @@ namespace wdc3.net.native
             InitializeComponent();
 
             const string db = "Map";
-            var reader = new Db2ToTableReader(@$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db.ToLower()}.db2", @$"D:\Work\wdc3.net\wdc3.net.test\TestFiles\{db}.dbd");
+            var reader = new Db2ToTableReader(@$"C:\Work\wdc3.net\wdc3.net.test\TestFiles\{db.ToLower()}.db2", @$"C:\Work\wdc3.net\wdc3.net.test\TestFiles\{db}.dbd");
             var table = reader.Read();
 
             dataGridView1.DataSource = table.DataTable;
