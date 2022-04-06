@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wdc3.net.Enums;
 using wdc3.net.File;
 
@@ -12,8 +9,8 @@ namespace wdc3.net.Table
 {
     public class Db2ValueInserterNoOffsetFlag
     {
-        private decimal _recordDataSize;
-        private decimal _recordSize;
+        private readonly decimal _recordDataSize;
+        private readonly decimal _recordSize;
 
         private readonly byte[] _palletData;
         private readonly byte[] _commonData;
@@ -24,11 +21,11 @@ namespace wdc3.net.Table
 
         private Section CurrentSection => _sections[_tactKeyHash];
         private ulong _tactKeyHash;
-        private Dictionary<ulong, Section> _sections = new();
+        private readonly Dictionary<ulong, Section> _sections = new();
 
-        private List<uint> _currentIdList = new();
-        private List<BitArray> _currentSectionData = new();
-        private List<string> _currentSectionStrings = new() { " " };
+        private readonly List<uint> _currentIdList = new();
+        private readonly List<BitArray> _currentSectionData = new();
+        private readonly List<string> _currentSectionStrings = new() { " " };
 
         public int?[] PalletValues = new int?[1000];
 
@@ -56,7 +53,7 @@ namespace wdc3.net.Table
                             var size = cell.FieldStorageInfo.FieldSizeBits / cell.ColumnInfo.ArrayLength;
                             var arrayValues = ((List<object>)(cell?.Value ?? throw new NullReferenceException(nameof(Db2Cell.Value)))).Select(value => (int)value).ToArray();
 
-                            for(int i = 0; i < arrayValues.Length; i++)
+                            for(var i = 0; i < arrayValues.Length; i++)
                             {
                                 WriteNumber(arrayValues[i], size);
                             }
@@ -103,6 +100,7 @@ namespace wdc3.net.Table
         private void UpdateSection(SectionHeader sectionHeader)
         {
             if(!_sections.ContainsKey(sectionHeader.TactKeyHash))
+            {
                 _sections.Add(sectionHeader.TactKeyHash, new Section()
                 {
                     Records = new List<RecordData>(),
@@ -113,6 +111,7 @@ namespace wdc3.net.Table
                     RelationshipMap = null,
                     OffsetMapIdList = new List<uint>()
                 });
+            }
 
             if(_tactKeyHash != sectionHeader.TactKeyHash)
             {
@@ -121,17 +120,14 @@ namespace wdc3.net.Table
             }
         }
 
-        private void InsertDataToSection()
-        {
-            CurrentSection.Records = ConvertSectionData().ToArray();
-        }
+        private void InsertDataToSection() => CurrentSection.Records = ConvertSectionData().ToArray();
 
         private void WriteNumber(int value, int size)
         {
             var bits = new BitArray(BitConverter.GetBytes(value));
             var bools = new List<bool>();
 
-            for(int bitIndex = 0; bitIndex < size; bitIndex++)
+            for(var bitIndex = 0; bitIndex < size; bitIndex++)
                 bools.Add(bits[bitIndex]);
 
             _currentSectionData.Add(new BitArray(bools.ToArray()));
@@ -145,7 +141,7 @@ namespace wdc3.net.Table
             var output = new byte[bits.Length / 8];
             bits.CopyTo(output, 0);
 
-            for(int i = 0; i < output.Length; i += (int)_recordSize)
+            for(var i = 0; i < output.Length; i += (int)_recordSize)
             {
                 var data = output.Skip(i).Take((int)_recordSize).ToArray();
 
@@ -190,7 +186,7 @@ namespace wdc3.net.Table
             }
             else
             {
-                for(int i = 0; i < values.Length; i++)
+                for(var i = 0; i < values.Length; i++)
                 {
                     PalletValues[index + i] = values[i];
                 }
@@ -200,7 +196,7 @@ namespace wdc3.net.Table
 
             IEnumerable<bool> CheckAllValuesFromArray(int[] values, uint index)
             {
-                for(int i = 0; i < values.Length; i++)
+                for(var i = 0; i < values.Length; i++)
                 {
                     yield return PalletValues[index + i] == null || PalletValues[index + i] == values[i];
                 }

@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wdc3.net.File;
 
 namespace wdc3.net.Writer
 {
     public class Db2Writer
     {
-        private BinaryWriter? _writer;
+        private readonly BinaryWriter? _writer;
 
         public void WriteFile(Db2 db2, string path)
         {

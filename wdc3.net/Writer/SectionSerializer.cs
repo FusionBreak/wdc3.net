@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wdc3.net.File;
 
 namespace wdc3.net.Writer
@@ -21,8 +19,10 @@ namespace wdc3.net.Writer
                         if(sectionDefault.Records is not null)
                         {
                             foreach(var record in sectionDefault.Records)
+                            {
                                 if(record is not null && record.Data is not null)
                                     output.AddRange(record.Data.ToArray());
+                            }
 
                             if(sectionDefault.StringData is not null)
                                 output.AddRange(sectionDefault.StringData.ToArray());
@@ -36,8 +36,10 @@ namespace wdc3.net.Writer
                 }
 
                 if(section.IdList is not null)
+                {
                     foreach(var id in section.IdList)
                         output.AddRange(BitConverter.GetBytes(id));
+                }
 
                 if(section.CopyTable is not null)
                 {
@@ -71,8 +73,10 @@ namespace wdc3.net.Writer
                 }
 
                 if(section.OffsetMapIdList is not null)
+                {
                     foreach(var id in section.OffsetMapIdList)
                         output.AddRange(BitConverter.GetBytes(id));
+                }
             }
 
             return output.ToArray();

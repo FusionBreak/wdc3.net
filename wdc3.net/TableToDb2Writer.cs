@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using wdc3.net.File;
 using wdc3.net.Reader;
 using wdc3.net.Table;
@@ -12,7 +10,7 @@ namespace wdc3.net
 {
     public class TableToDb2Writer
     {
-        private Db2Table _table;
+        private readonly Db2Table _table;
         private readonly Db2Definition _dbd;
         private readonly Db2CreateInformation _createInformation;
         private readonly Db2ValueInserterNoOffsetFlag _inserter;

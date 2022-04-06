@@ -9,12 +9,16 @@ namespace wdc3.net.Reader
         public static IEnumerable<ColumnDefinition> Parse(DataChunk chunk)
         {
             if(chunk.Content == null)
+            {
                 throw new Exception();
+            }
             else
+            {
                 foreach(var row in chunk.Content)
                 {
                     yield return parseString(row);
                 }
+            }
         }
 
         //int<Map::ID> ParentMapID // Lorem Ipsum

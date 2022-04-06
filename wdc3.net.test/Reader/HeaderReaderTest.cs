@@ -10,8 +10,8 @@ namespace wdc3.net.test.Reader
         public void ReadHeaderCorrectly()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
-            HeaderReader headerReader = new HeaderReader(reader);
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var headerReader = new HeaderReader(reader);
             var header = headerReader.Read();
             Assert.Equal(860046423, header.Magic);
             Assert.Equal((uint)1085, header.RecordCount);

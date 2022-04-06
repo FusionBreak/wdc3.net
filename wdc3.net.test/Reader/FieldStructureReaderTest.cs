@@ -11,9 +11,9 @@ namespace wdc3.net.test.Reader
         public void ReadCorrectNumberOfFieldStructures()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 232;
-            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);
+            var fieldStructureReader = new FieldStructureReader(reader, 23);
             var fieldStructures = fieldStructureReader.Read();
 
             Assert.Equal(23, fieldStructures.Count());
@@ -23,9 +23,9 @@ namespace wdc3.net.test.Reader
         public void ReadFieldStructuresCorrectly()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 232;
-            FieldStructureReader fieldStructureReader = new FieldStructureReader(reader, 23);
+            var fieldStructureReader = new FieldStructureReader(reader, 23);
             var fieldStructures = fieldStructureReader.Read().ToList();
 
             Assert.Equal(0, fieldStructures[0].Size);

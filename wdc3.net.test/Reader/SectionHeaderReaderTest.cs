@@ -13,9 +13,9 @@ namespace wdc3.net.test.Reader
         public void ReadCorrectNumberOfSectionHeaders()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 72;
-            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, 4);
+            var sectionHeaderReader = new SectionHeaderReader(reader, 4);
             var sectionHeaders = sectionHeaderReader.Read();
 
             Assert.Equal(4, sectionHeaders.Count());
@@ -25,12 +25,12 @@ namespace wdc3.net.test.Reader
         public void ReadSectionHeadersCorrectly()
         {
             var fileBuffer = System.IO.File.ReadAllBytes(TestFiles.MAP_DB2_PATH);
-            BinaryReader reader = new BinaryReader(new MemoryStream(fileBuffer));
+            var reader = new BinaryReader(new MemoryStream(fileBuffer));
             reader.BaseStream.Position = 72;
-            SectionHeaderReader sectionHeaderReader = new SectionHeaderReader(reader, 4);
+            var sectionHeaderReader = new SectionHeaderReader(reader, 4);
             var sectionHeaders = sectionHeaderReader.Read().ToList();
 
-            for(int i = 0; i < TestData.Count; i++)
+            for(var i = 0; i < TestData.Count; i++)
             {
                 Assert.Equal(TestData[i].TactKeyHash, sectionHeaders[i].TactKeyHash);
                 Assert.Equal(TestData[i].FileOffset, sectionHeaders[i].FileOffset);

@@ -36,7 +36,7 @@ namespace wdc3.net.Table
                 var ids = section.IdList.ToArray();
                 var mapIds = section.OffsetMapIdList?.ToArray();
 
-                for(int offsetMapIndex = 0; offsetMapIndex < offsetMaps.Length; offsetMapIndex++)
+                for(var offsetMapIndex = 0; offsetMapIndex < offsetMaps.Length; offsetMapIndex++)
                 {
                     yield return new RowInfo()
                     {
@@ -55,7 +55,7 @@ namespace wdc3.net.Table
         {
             foreach(var section in sections)
             {
-                for(int index = 0; index < section.IdList?.Count(); index++)
+                for(var index = 0; index < section.IdList?.Count(); index++)
                 {
                     var id = section.IdList.Skip(index).First();
                     var offsetMap = section.OffsetMap?.Skip(index).First();

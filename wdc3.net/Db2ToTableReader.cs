@@ -37,13 +37,21 @@ namespace wdc3.net
             get
             {
                 foreach(var section in Sections)
+                {
                     if(section is Section defaultSection)
+                    {
                         foreach(var record in defaultSection.Records ?? throw new Exception())
-                            foreach(byte data in record.Data ?? throw new Exception())
+                        {
+                            foreach(var data in record.Data ?? throw new Exception())
                                 yield return data;
+                        }
+                    }
                     else if(section is SectionWithFlag flagSection)
+                    {
                         foreach(var data in flagSection.VariableRecordData ?? throw new Exception())
                             yield return data;
+                    }
+                }
             }
         }
 
@@ -52,9 +60,13 @@ namespace wdc3.net
             get
             {
                 foreach(var section in Sections)
+                {
                     if(section is Section defaultSection)
-                        foreach(byte data in defaultSection.StringData ?? throw new Exception())
+                    {
+                        foreach(var data in defaultSection.StringData ?? throw new Exception())
                             yield return data;
+                    }
+                }
             }
         }
 
@@ -98,7 +110,7 @@ namespace wdc3.net
             //var sectionIndex = Sections.TakeWhile(section => section.IdList?.Contains(RowId) ?? throw new NullReferenceException(nameof(ISection.IdList))).Count();
             //return _db2.SectionHeaders?.ElementAt(sectionIndex) ?? throw new NullReferenceException(nameof(Db2.SectionHeaders));
 
-            for(int sectionIndex = 0; sectionIndex < Sections.Count(); sectionIndex++)
+            for(var sectionIndex = 0; sectionIndex < Sections.Count(); sectionIndex++)
             {
                 if(Sections.Skip(sectionIndex).First().IdList?.Contains(RowId) ?? throw new NullReferenceException(nameof(ISection.IdList)))
                 {
@@ -142,17 +154,23 @@ namespace wdc3.net
         private IEnumerable<uint> ReadOffsetMapIds()
         {
             foreach(var section in Sections)
+            {
                 if(section is SectionWithFlag flagSection && flagSection.OffsetMapIdList is not null)
+                {
                     foreach(var offsetMapId in flagSection.OffsetMapIdList)
                         yield return offsetMapId;
+                }
+            }
         }
 
         private IEnumerable<(string name, Db2ValueTypes type)> ReadColumns(IEnumerable<ColumnInfo> columnInfos)
         {
             foreach(var colInfo in columnInfos)
+            {
                 yield return colInfo != null && colInfo.Name != null
                     ? (colInfo.Name, colInfo.Type)
                     : throw new Exception();
+            }
         }
 
         private IEnumerable<(ColumnInfo Info, FieldStructure Structure, IFieldStorageInfo StorageInfo)> GetColumnReadInfos()
@@ -161,7 +179,7 @@ namespace wdc3.net
             var fieldStorageInfos = FieldStorageInfos.ToArray();
             var columnInfos = _columnInfos.Where(column => !column.IsId).ToArray();
 
-            for(int columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
+            for(var columnIndex = 0; columnIndex < columnInfos.Length; columnIndex++)
                 yield return (columnInfos[columnIndex], fieldStructures[columnIndex], fieldStorageInfos[columnIndex]);
         }
     }

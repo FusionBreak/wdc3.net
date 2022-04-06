@@ -15,7 +15,7 @@ namespace wdc3.net.Table
         {
             get
             {
-                DataTable data = new DataTable();
+                var data = new DataTable();
 
                 foreach(var column in ColumnNames)
                     data.Columns.Add(column);

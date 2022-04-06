@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using wdc3.net.Enums;
 using wdc3.net.File;
 
@@ -30,7 +29,7 @@ namespace wdc3.net.Table
         {
             get
             {
-                for(int palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
+                for(var palletIndex = 0; palletIndex < (_palletData.Count() / PALLET_VALUE_SIZE); palletIndex++)
                 {
                     yield return BitConverter.ToInt32(_palletData.Skip(palletIndex * PALLET_VALUE_SIZE).Take(PALLET_VALUE_SIZE).ToArray());
                 }
@@ -61,7 +60,7 @@ namespace wdc3.net.Table
                         var size = fieldStorageInfo.FieldSizeBits / columnInfo.ArrayLength;
                         var output = new List<object>();
 
-                        for(int i = 0; i < columnInfo.ArrayLength; i++)
+                        for(var i = 0; i < columnInfo.ArrayLength; i++)
                         {
                             output.Add(ReadInt(CurrentRowBitOffset + fieldStorageInfo.FieldOffsetBits + (size * i), size));
                         }
@@ -100,7 +99,7 @@ namespace wdc3.net.Table
                     var offset_array = _additionalDataOffset / 4 + (index_array);
 
                     var output2 = new List<object>();
-                    for(int i = 0; i < columnInfo.ArrayLength; i++)
+                    for(var i = 0; i < columnInfo.ArrayLength; i++)
                     {
                         output2.Add(PalletValues.Skip((int)offset_array + i).First());
                     }
@@ -117,9 +116,9 @@ namespace wdc3.net.Table
         private int ReadInt(int offsetInBits, int sizeInBits)
         {
             //int maxPossibleValue = (int)Math.Pow(2, sizeInBits) - 1;
-            int output = 0;
+            var output = 0;
 
-            for(int bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
+            for(var bitIndex = 0; bitIndex < sizeInBits; bitIndex++)
             {
                 var bit = _recordDataAsBits.Get(offsetInBits + bitIndex) ? 1 : 0;
                 output |= bit << bitIndex;

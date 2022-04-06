@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using wdc3.net.Enums;
 using wdc3.net.File;
 
@@ -42,7 +41,7 @@ namespace wdc3.net.Table
 
         private IEnumerable<object> ExtractMany(Db2ValueTypes type, int size, bool isSigned, int valueOffset, int count)
         {
-            for(int i = 0; i < count; i++)
+            for(var i = 0; i < count; i++)
             {
                 var output = ExtractSingle(type, size, isSigned, valueOffset + (size * i));
 

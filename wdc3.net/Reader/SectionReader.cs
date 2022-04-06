@@ -38,7 +38,7 @@ namespace wdc3.net.Reader
                 if(sectionHeader.CopyTableCount > 0)
                 {
                     var copyTableEntrys = new List<CopyTableEntry>();
-                    for(int copyTableIndex = 0; copyTableIndex < sectionHeader.CopyTableCount; copyTableIndex++)
+                    for(var copyTableIndex = 0; copyTableIndex < sectionHeader.CopyTableCount; copyTableIndex++)
                     {
                         copyTableEntrys.Add(new CopyTableEntry
                         {
@@ -52,7 +52,7 @@ namespace wdc3.net.Reader
                 if(sectionHeader.OffsetMapIdCount > 0)
                 {
                     var offsetMapEntrys = new List<OffsetMapEntry>();
-                    for(int offsetMapIndex = 0; offsetMapIndex < sectionHeader.OffsetMapIdCount; offsetMapIndex++)
+                    for(var offsetMapIndex = 0; offsetMapIndex < sectionHeader.OffsetMapIdCount; offsetMapIndex++)
                     {
                         offsetMapEntrys.Add(new OffsetMapEntry
                         {
